@@ -110,13 +110,6 @@ public class TeamMemberActivity extends Activity {
         plus_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
-                /*
-                open dialog -> get user name.
-
-                find user in database through the user name and insert the user name to database team member.
-                if there isn't the user name in database, toast "no exist that user"
-                */
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(TeamMemberActivity.this);
                 builder.setTitle("Added Member Name");
@@ -149,25 +142,18 @@ public class TeamMemberActivity extends Activity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                //titles.add(title);
-                Log.d("avalue::", dataSnapshot.getKey());
-
-                //DataSnapshot contactSnapshot = dataSnapshot.child("");
                 Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
-                Log.d("childrenValue::", contactChildren.toString());
 
                 members.clear();
                 for (DataSnapshot contact : contactChildren) {
 
                     Uri imageUri = Uri.parse(contact.child("memberPhoto").getValue().toString());
-                    Log.d("zxcv::", imageUri.toString());
+
                     Bitmap bitmap = null;
+                    //TODO: exception error
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                        Log.d("asdf::", "asdf");
-
                     } catch (IOException e) {
-                        Log.d("qwer::", "qwer");
                         e.printStackTrace();
                     }
                     members.add(contact.child("memberName").getValue().toString());
@@ -195,8 +181,6 @@ public class TeamMemberActivity extends Activity {
                 Log.d("childrenValue::", contactChildren.toString());
 
                 for (DataSnapshot contact : contactChildren) {
-
-                    Log.d("uservalue:: ", contact.child("name").getValue().toString());
 
                     if(contact.child("name").getValue().toString().equals(plusMember)) {
                         getMemberUid = contact.child("uid").getValue().toString();
@@ -228,8 +212,6 @@ public class TeamMemberActivity extends Activity {
                 Log.d("childrenValue::", contactChildren.toString());
 
                 for (DataSnapshot contact : contactChildren) {
-
-                    //Log.d("uservalue:: ", contact.child("name").getValue().toString());
 
                     if(contact.child("memberUid").getValue().toString().equals(memberUid)) {
                         duplicatedFlag = true;
@@ -311,17 +293,6 @@ public class TeamMemberActivity extends Activity {
         Member member = new Member(getMemberName, getMemberUid, getMemberPhoto);
 
         memberRef.push().setValue(member);
-    }
-
-    public static String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality) {
-        ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
-        image.compress(compressFormat, quality, byteArrayOS);
-        return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
-    }
-
-    public static Bitmap decodeBase64(String input) {
-        byte[] decodedBytes = Base64.decode(input, 0);
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
 }
