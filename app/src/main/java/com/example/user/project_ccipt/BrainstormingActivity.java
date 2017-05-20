@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -28,7 +29,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,7 +56,7 @@ import java.util.ArrayList;
 public class BrainstormingActivity extends Activity {
 
     private static final String currentTeamName = TeamListActivity.currentTeamName;
-    Team currentTeam = new Team(currentTeamName);
+    private static final String TAG = "BrainstormingActivity";
 
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
@@ -76,13 +86,24 @@ public class BrainstormingActivity extends Activity {
     private ListViewAdapter   m_Adapter;
     private String absolutePath;
 
+
+    // Write a message to the database
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference brainstromsRef = database.getReference("Brainstroms");
+
+    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.brainstorming);
 
+        BitmapDrawable drawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.ccipt);
+        photo = drawable.getBitmap();
+
         TextView teamNameTextView = (TextView) findViewById(R.id.BrainStromTeamName);
-        teamNameTextView.setText(currentTeam.getTitle());
+        teamNameTextView.setText(currentTeamName);
 
         brainstorming_button = (Button) findViewById(R.id.brainstorming_button);
         appointment_button = (Button) findViewById(R.id.appointment_button);
@@ -180,7 +201,7 @@ public class BrainstormingActivity extends Activity {
                                 descriptions.add(descriptionBox.getText().toString());
 
                                 m_Adapter = new ListViewAdapter();
-                                m_ListView = (ListView) findViewById(R.id.listview);
+                                m_ListView = (ListView) findViewById(R.id.brainstromlistview);
                                 m_ListView.setAdapter(m_Adapter);
 
                                 for (int i =0;i<titles.size();i++){
@@ -232,6 +253,44 @@ public class BrainstormingActivity extends Activity {
             }
         });
 
+        brainstromsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                //titles.add(title);
+                Log.d("avalue::", dataSnapshot.getKey());
+
+                //DataSnapshot contactSnapshot = dataSnapshot.child("");
+                Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
+                Log.d("childrenValue::", contactChildren.toString());
+
+                /*
+                titles.clear();
+                images.clear();
+                for (DataSnapshot contact : contactChildren) {
+
+                    Log.d("titlevalue:: ", contact.child("title").getValue().toString());
+                    Log.d("imagevalue:: ", "" + contact.child("image").getValue().toString());
+                    Log.d("uservalue:: ", "" + contact.child("userUid").getValue().toString());
+
+                    Bitmap decodedImage = decodeBase64(contact.child("image").getValue().toString());
+                    if(contact.child("userUid").getValue().toString().equals(currentUser.getUid())) {
+                        titles.add(contact.child("title").getValue().toString());
+                        images.add(decodedImage);
+                    }
+                }
+                */
+
+                //TODO: how do i make custom list?
+                //makeCustomList();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+
     }
 
 
@@ -273,30 +332,46 @@ public class BrainstormingActivity extends Activity {
             if(requestCode==REQUEST_PHOTO_ALBUM) {
                 photo_imageview.setImageURI(data.getData());
                 try {
-                    Bitmap bm = MediaStore.Images.Media.getBitmap(getContentResolver(),data.getData());
-                    images.add(bm);
+                    photo = MediaStore.Images.Media.getBitmap(getContentResolver(),data.getData());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                images.add(photo);
             }
         }
     }
 
-    private static class Team {
-        Team() {};
-        Team(String title) {
-            teamTitle = title;
+    private class BrainStrom {
+        BrainStrom() {};
+        BrainStrom(String Btitle, String Bdescription, String Bimage) {
+            title = Btitle;
+            description = Bdescription;
+            image = Bimage;
         };
 
-        //TODO : Developing userAddress
-        private String teamTitle, teamImage;
+        private String title, description, image;
 
         public String getTitle() {
-            return teamTitle;
-        };
-        public void setTitle(String currentTeam) {
-            teamTitle = currentTeam;
+            return title;
         }
+        public String getDescription() {
+            return description;
+        }
+        public String getImage() {
+            return image;
+        }
+    }
+
+    public static String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality) {
+        ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+        image.compress(compressFormat, quality, byteArrayOS);
+        return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+    }
+
+    public static Bitmap decodeBase64(String input) {
+        byte[] decodedBytes = Base64.decode(input, 0);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
 }

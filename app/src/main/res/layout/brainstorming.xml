@@ -14,14 +14,14 @@
         android:text="Team Name" />
 
     <ListView
-        android:id="@+id/listview"
+        android:id="@+id/brainstromlistview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
         android:layout_marginBottom="50dp"
-        android:background="@drawable/brainstorming_rect">
+        android:layout_marginTop="50dp"
+        android:background="@drawable/brainstorming_rect"
+        android:orientation="horizontal">
 
     </ListView>
 

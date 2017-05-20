@@ -62,8 +62,8 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
     ImageView photo_imageview;
     Bitmap photo;
 
-    ListView teamList;
     public static String currentTeamName;
+    ListView teamList;
     String teamName;
     String teamImage;
     String TAG = "TeamListActivity";
@@ -74,7 +74,6 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference teamRef = database.getReference("Teams");
-    DatabaseReference teamUserRef = database.getReference("TeamUser");
 
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -105,12 +104,15 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
                 for (DataSnapshot contact : contactChildren) {
                     Log.d("titlevalue:: ", contact.child("title").getValue().toString());
                     Log.d("imagevalue:: ", "" + contact.child("image").getValue().toString());
-                    Log.d("uservalue:: ", "" + contact.child("userUid").getValue().toString());
 
-                    Bitmap decodedImage = decodeBase64(contact.child("image").getValue().toString());
-                    if(contact.child("userUid").getValue().toString().equals(currentUser.getUid())) {
-                        titles.add(contact.child("title").getValue().toString());
-                        images.add(decodedImage);
+                    Iterable<DataSnapshot> contactChildren2 = contact.child("members").getChildren();
+                    for(DataSnapshot contact2 : contactChildren2) {
+                        Log.d("membervalue:: ", contact2.child("memberName").getValue().toString());
+                        if(contact2.child("memberUid").getValue().toString().equals(currentUser.getUid())) {
+                            titles.add(contact.child("title").getValue().toString());
+                            Bitmap decodedImage = decodeBase64(contact.child("image").getValue().toString());
+                            images.add(decodedImage);
+                        }
                     }
                 }
 
@@ -245,14 +247,13 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
 
     private static class Team {
         Team() {};
-        Team(String title, String image, String user) {
+        Team(String title, String image) {
             teamTitle = title;
             teamImage = image;
-            userUid = user;
         };
 
         //TODO : Developing userAddress
-        private String teamTitle, teamImage, userUid;
+        private String teamTitle, teamImage;
 
         public String getTitle() {
             return teamTitle;
@@ -260,31 +261,49 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
         public String getImage() {
             return teamImage;
         };
-        public String getUserUid() {
-            return userUid;
-        }
         public void setTitle(String currentTeam) {
             teamTitle = currentTeam;
         }
     }
 
+    private static class Member {
+        Member() {};
+        Member(String name, String user, String photo) {
+            memberName = name;
+            memberUid = user;
+            memberPhoto = photo;
+        };
 
-    private void writeNewTeam(String title, String image) {
-        Team team = new Team(title, image, currentUser.getUid());
+        //TODO : Developing userAddress
+        private String memberName, memberUid, memberPhoto;
 
-        teamRef.push().setValue(team);
-
+        public String getMemberName() {
+            return memberName;
+        };
+        public String getMemberUid() {
+            return memberUid;
+        };
+        public String getMemberPhoto() {
+            return memberPhoto;
+        }
     }
 
-    public static String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality)
-    {
+
+    private void writeNewTeam(String title, String image) {
+        Team team = new Team(title, image);
+        Member member = new Member(currentUser.getDisplayName(), currentUser.getUid(), currentUser.getPhotoUrl().toString());
+
+        teamRef.child(team.getTitle()).setValue(team);
+        teamRef.child(team.getTitle()).child("members").push().setValue(member);
+    }
+
+    public static String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality) {
         ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
         image.compress(compressFormat, quality, byteArrayOS);
         return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
     }
 
-    public static Bitmap decodeBase64(String input)
-    {
+    public static Bitmap decodeBase64(String input) {
         byte[] decodedBytes = Base64.decode(input, 0);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }

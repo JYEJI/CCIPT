@@ -15,13 +15,14 @@
         android:text="Team Name"
         android:textSize="20dp"/>
 
-    <TextView
-        android:id="@+id/textView4"
+    <ListView
+        android:id="@+id/memberListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="33dp"
-        android:layout_marginTop="80dp"
-        android:text="member_name1" />
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="50dp"
+        android:orientation="horizontal"/>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -72,7 +73,7 @@
 
 
     <Button
-        android:id="@+id/plus_button"
+        android:id="@+id/memberplus_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignEnd="@+id/relativeLayout"
