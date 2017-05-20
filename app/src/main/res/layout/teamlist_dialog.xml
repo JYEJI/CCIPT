@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ScrollView android:layout_height="match_parent" android:layout_width="match_parent"
+    android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="vertical">
+
+    <ImageView
+        android:layout_height="200dp"
+        android:layout_width="200dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/brainstorming_rect"
+        android:id="@+id/photo_imageview"/>
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/input_teamname"
+        android:hint="Team Name"/>
+
+</LinearLayout>
+
+</ScrollView>

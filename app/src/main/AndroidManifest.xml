@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.user.project_ccipt">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ccipt"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBYz0ZTp5OF3XRlG77E4L1yjYo4tGBO2SA" />
+
+
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".SplashActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+            android:theme="@android:style/Theme.NoTitleBar">
+        </activity>
+        <activity android:name=".InformationActivity"/>
+        <activity android:name=".SigninActivity"/>
+        <activity android:name=".TeamListActivity"></activity>
+        <activity android:name=".BrainstormingActivity"></activity>
+        <activity android:name=".AppointmentActivity"></activity>
+        <activity android:name=".TeamChatActivity"></activity>
+        <activity android:name=".TeamMemberActivity"></activity>
+    </application>
+
+</manifest>

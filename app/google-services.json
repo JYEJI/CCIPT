@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "466380684655",
+    "firebase_url": "https://ccipt-aa1fb.firebaseio.com",
+    "project_id": "ccipt-aa1fb",
+    "storage_bucket": "ccipt-aa1fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:466380684655:android:31991c05eb07248c",
+        "android_client_info": {
+          "package_name": "com.example.user.project_ccipt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "466380684655-f07ufo5bptls4a1173tmoask1npde6j8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.user.project_ccipt",
+            "certificate_hash": "6e0305490e40ec7c0e0ea1348064a47cf109ef00"
+          }
+        },
+        {
+          "client_id": "466380684655-vudv3r4k79otu5akt21c3v9kd09pnja4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.user.project_ccipt",
+            "certificate_hash": "5cda10d4aca7b8e90457e235d5cffee936fef795"
+          }
+        },
+        {
+          "client_id": "466380684655-e1gujels6ovm60npnvoh3hifl019jute.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbpIKmHH7ls_W6iJlTPrfc4Fn6_GWyQac"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "466380684655-e1gujels6ovm60npnvoh3hifl019jute.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

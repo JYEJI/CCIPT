@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/BrainStromTeamName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="10dp"
+        android:textSize="20dp"
+        android:padding="15dp"
+        android:textStyle="bold"
+        android:text="Team Name" />
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/brainstorming_rect">
+
+    </ListView>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout"
+        android:layout_centerHorizontal="true">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/buttons">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="brainstorming"
+                android:id="@+id/brainstorming_button"
+                android:textSize="10dp"
+                android:layout_alignParentBottom="true"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="#FFFFFF"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="appointment"
+                android:id="@+id/appointment_button"
+                android:textSize="10dp"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@+id/brainstorming_button"
+                android:textColor="#FFFFFF"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="team chat"
+                android:id="@+id/teamchat_button"
+                android:textSize="10dp"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@+id/appointment_button"
+                android:textColor="#FFFFFF"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="team member"
+                android:id="@+id/teammember_button"
+                android:textSize="10dp"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@+id/teamchat_button"
+                android:textColor="#FFFFFF"/>
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/plus_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignEnd="@+id/relativeLayout"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="60dp"
+        android:layout_marginEnd="11dp"
+        android:background="@drawable/round_shape"
+        android:text="+"
+        android:textColor="#f8fdf9" />
+
+</RelativeLayout>
