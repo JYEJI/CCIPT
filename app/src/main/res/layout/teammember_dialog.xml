@@ -10,7 +10,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Your Idea Photo"
+            android:text="Member Profile Photo"
             android:textSize="20dp"
             android:textAlignment="center"/>
 
@@ -31,17 +31,10 @@
             android:layout_gravity="center_horizontal"/>
 
         <EditText
-            android:id="@+id/input_title"
+            android:id="@+id/input_member"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Title"
-            android:inputType="text"/>
-
-        <EditText
-            android:id="@+id/input_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Description"
+            android:hint="Member Name"
             android:inputType="text"/>
     </LinearLayout>
 

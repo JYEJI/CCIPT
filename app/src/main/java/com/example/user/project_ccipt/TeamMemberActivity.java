@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.InputType;
@@ -34,6 +35,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -44,10 +46,29 @@ import java.util.ArrayList;
 
 public class TeamMemberActivity extends Activity {
 
+    boolean check_member=true;
+
+    //사진으로 전송시 되돌려 받을 번호
+    static int REQUEST_PICTURE=1;
+    //앨범으로 전송시 돌려받을 번호
+    static int REQUEST_PHOTO_ALBUM=2;
+    //첫번째 이미지 아이콘 샘플 이다.
+    static String SAMPLEIMG="ic_launcher.png";
+
+    ArrayList<String> names = new ArrayList<>();
+    ArrayList<Bitmap> user_images = new ArrayList<>();
+
+    ImageView photo_imageview;
+    Bitmap photo;
+
+    private ListView                m_ListView;
+    private TeamMemberListViewAdapter   m_Adapter;
+
     private static final String currentTeamName = TeamListActivity.currentTeamName;
     private static final String TAG = "TeamMemberActivity";
 
     Button brainstorming_button,appointment_button,teamchat_button,teammember_button,plus_button;
+
 
     ListView memberList;
     ArrayList<String> members = new ArrayList<>();
@@ -114,17 +135,56 @@ public class TeamMemberActivity extends Activity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(TeamMemberActivity.this);
                 builder.setTitle("Added Member Name");
 
-                // Set up the input
-                final EditText input = new EditText(TeamMemberActivity.this);
-                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                //input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                builder.setView(input);
+                View customLayout=View.inflate(TeamMemberActivity.this,R.layout.teammember_dialog,null);
+                builder.setView(customLayout);
+
+                final EditText memberBox = (EditText) customLayout.findViewById(R.id.input_member);
+                photo_imageview = (ImageView)customLayout.findViewById(R.id.photo_imageview);
+
+                photo_imageview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener(){
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                doTakeAlbumAction();
+                            }
+                        };
+                        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener(){
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                dialog.cancel();
+                            }
+                        };
+                        new android.support.v7.app.AlertDialog.Builder(TeamMemberActivity.this)
+                                .setTitle("Select Image")
+                                //.setPositiveButton("Take a Photo",cameraListener)
+                                .setNeutralButton("Select Album",albumListener)
+                                .setNegativeButton("Cancel",cancelListener)
+                                .show();
+                    }
+                });
 
                 // Set up the buttons
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        findMember(input.getText().toString());
+
+                        findMember(memberBox.getText().toString());
+                        names.add(memberBox.getText().toString());
+
+                        m_Adapter = new TeamMemberListViewAdapter();
+                        m_ListView = (ListView) findViewById(R.id.memberListView);
+                        m_ListView.setAdapter(m_Adapter);
+
+                        for (int i =0;i<names.size();i++){
+                            m_Adapter.addItem(user_images.get(i),names.get(i));
+                        }
+
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -158,6 +218,7 @@ public class TeamMemberActivity extends Activity {
                     }
                     members.add(contact.child("memberName").getValue().toString());
                     images.add(bitmap);
+                    user_images.add(bitmap);
 
                 }
 
@@ -190,6 +251,7 @@ public class TeamMemberActivity extends Activity {
                 }
 
                 if(getMemberName.equals("") && getMemberUid.equals("") && getMemberPhoto.equals("")) {
+                    check_member=false;
                     Toast.makeText(getBaseContext(), "There isn't that user.", Toast.LENGTH_LONG).show();
                 } else {
                     checkDuplicated(getMemberUid);
@@ -293,6 +355,44 @@ public class TeamMemberActivity extends Activity {
         Member member = new Member(getMemberName, getMemberUid, getMemberPhoto);
 
         memberRef.push().setValue(member);
+    }
+
+    public void doTakeAlbumAction(){
+        Intent intent=new Intent(Intent.ACTION_PICK);
+        intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
+        intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent,REQUEST_PHOTO_ALBUM);
+
+    }
+
+    Bitmap loadPicture(){
+        File file=new File(Environment.getExternalStorageDirectory(),SAMPLEIMG);
+        BitmapFactory.Options options=new BitmapFactory.Options();
+        options.inSampleSize = 16;
+        return BitmapFactory.decodeFile(file.getAbsolutePath(),options);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode==RESULT_OK){
+            if(requestCode==REQUEST_PICTURE){
+                /*photo_imageview.setImageBitmap(loadPicture());
+                photo = loadPicture();
+                images.add(photo);*/
+            }
+            if(requestCode==REQUEST_PHOTO_ALBUM) {
+                photo_imageview.setImageURI(data.getData());
+                try {
+                    photo = MediaStore.Images.Media.getBitmap(getContentResolver(),data.getData());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                user_images.add(photo);
+            }
+        }
     }
 
 }

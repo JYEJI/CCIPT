@@ -58,18 +58,12 @@ public class BrainstormingActivity extends Activity {
     private static final String currentTeamName = TeamListActivity.currentTeamName;
     private static final String TAG = "BrainstormingActivity";
 
-    private static final int PICK_FROM_CAMERA = 0;
-    private static final int PICK_FROM_ALBUM = 1;
-    private static final int CROP_FROM_IMAGE = 2;
-
     //사진으로 전송시 되돌려 받을 번호
     static int REQUEST_PICTURE=1;
     //앨범으로 전송시 돌려받을 번호
     static int REQUEST_PHOTO_ALBUM=2;
     //첫번째 이미지 아이콘 샘플 이다.
     static String SAMPLEIMG="ic_launcher.png";
-
-    private Uri imageUri;
 
     Button brainstorming_button, appointment_button, teamchat_button, teammember_button, plus_button;
 
@@ -80,11 +74,8 @@ public class BrainstormingActivity extends Activity {
     ImageView photo_imageview;
     Bitmap photo;
 
-    boolean photo_in = false;
-
     private ListView                m_ListView;
     private ListViewAdapter   m_Adapter;
-    private String absolutePath;
 
 
     // Write a message to the database
