@@ -214,11 +214,14 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
 
                                 teamImage = encodedImage;
 
-                                if(teamNameBox.getText().toString().equals("")) {
-                                    teamName = "None";
-                                } else {
-                                    teamName = teamNameBox.getText().toString();
+                                if(teamNameBox.getText().toString().trim().length() > 20) {
+                                    Toast.makeText(getBaseContext(), "Length of team title is too long.\nYou should enter less than 20 characters", Toast.LENGTH_LONG).show();
+
+                                } else if(!teamNameBox.getText().toString().trim().equals("")) {
+                                    teamName = teamNameBox.getText().toString().trim();
                                 }
+
+
 
                                 writeNewTeam(teamName, teamImage);
                             }});

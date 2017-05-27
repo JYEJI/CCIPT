@@ -4,37 +4,38 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/chatImage_other"
+        android:id="@+id/chatImage_me"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"/>
 
     <TextView
-        android:id="@+id/chatName_other"
+        android:id="@+id/chatName_me"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/chatImage_other"
-        android:layout_toRightOf="@+id/chatImage_other"
+        android:layout_alignTop="@+id/chatImage_me"
+        android:layout_toLeftOf="@+id/chatImage_me"
         android:textSize="10dp" />
 
     <TextView
-        android:id="@+id/chatText_other"
+        android:id="@+id/chatText_me"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/chatName_other"
+        android:layout_below="@+id/chatName_me"
         android:layout_marginTop="1dip"
-        android:layout_toRightOf="@+id/chatImage_other"
+        android:layout_toLeftOf="@+id/chatImage_me"
+        android:gravity="end"
         android:textSize="12dp" />
 
     <TextView
-        android:id="@+id/chatTime_other"
+        android:id="@+id/chatTime_me"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/chatText_other"
+        android:layout_toLeftOf="@+id/chatText_me"
         android:textSize="7dp" />
 
 </RelativeLayout>

@@ -183,17 +183,33 @@ public class TeamChatActivity extends Activity {
         @Override
         public View getView(int position, View view, ViewGroup parent) {
             LayoutInflater inflater = context.getLayoutInflater();
-            View rowView = inflater.inflate(R.layout.chatlistview_other, null, true);
-            TextView chatName = (TextView) rowView.findViewById(R.id.chatName);
-            TextView chatText = (TextView) rowView.findViewById(R.id.chatText);
-            TextView chatTime = (TextView) rowView.findViewById(R.id.chatTime);
-            ImageView chatImage = (ImageView) rowView.findViewById(R.id.chatImage);
+            View rowView;
 
-            Uri photoUri = Uri.parse(photos.get(+position));
-            Glide.with(TeamChatActivity.this).load(photoUri).into(chatImage);
-            chatText.setText(messages.get(+position));
-            chatTime.setText(times.get(+position));
-            chatName.setText(names.get(+position));
+            if(currentUser.getDisplayName().equals(names.get(+position))) {
+                rowView = inflater.inflate(R.layout.chatlistview_me, null, true);
+                TextView chatName = (TextView) rowView.findViewById(R.id.chatName_me);
+                TextView chatText = (TextView) rowView.findViewById(R.id.chatText_me);
+                TextView chatTime = (TextView) rowView.findViewById(R.id.chatTime_me);
+                ImageView chatImage = (ImageView) rowView.findViewById(R.id.chatImage_me);
+
+                Uri photoUri = Uri.parse(photos.get(+position));
+                Glide.with(TeamChatActivity.this).load(photoUri).into(chatImage);
+                chatText.setText(messages.get(+position));
+                chatTime.setText(times.get(+position));
+                chatName.setText(names.get(+position));
+            } else {
+                rowView = inflater.inflate(R.layout.chatlistview_other, null, true);
+                TextView chatName = (TextView) rowView.findViewById(R.id.chatName_other);
+                TextView chatText = (TextView) rowView.findViewById(R.id.chatText_other);
+                TextView chatTime = (TextView) rowView.findViewById(R.id.chatTime_other);
+                ImageView chatImage = (ImageView) rowView.findViewById(R.id.chatImage_other);
+
+                Uri photoUri = Uri.parse(photos.get(+position));
+                Glide.with(TeamChatActivity.this).load(photoUri).into(chatImage);
+                chatText.setText(messages.get(+position));
+                chatTime.setText(times.get(+position));
+                chatName.setText(names.get(+position));
+            }
 
             return rowView;
         }

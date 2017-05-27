@@ -128,7 +128,7 @@ public class TeamMemberActivity extends Activity {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        findMember(input.getText().toString());
+                        findMember(input.getText().toString().trim());
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

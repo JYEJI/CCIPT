@@ -4,16 +4,27 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/TeamMemberTeamName"
-        android:textStyle="bold"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="10dp"
-        android:padding="15dp"
-        android:text="Team Name"
-        android:textSize="20dp"/>
+        android:layout_height="50dp"
+        android:background="#59d5fe"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/TeamMemberTeamName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="1dp"
+            android:layout_marginTop="1dp"
+            android:elevation="1dp"
+            android:paddingTop="5dp"
+            android:text="Team Name"
+            android:textColor="#FFFFFF"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/memberListView"
