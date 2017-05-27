@@ -82,9 +82,10 @@ public class AppointmentActivity extends FragmentActivity implements OnMapReadyC
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng ajou = new LatLng(37.2821251, 127.0463559);
+        mMap.addMarker(new MarkerOptions().position(ajou).title("Marker in Ajou University"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ajou, 14));
+
     }
 
     private static class Team {

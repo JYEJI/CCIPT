@@ -92,22 +92,16 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                //titles.add(title);
-                Log.d("avalue::", dataSnapshot.getKey());
 
                 //DataSnapshot contactSnapshot = dataSnapshot.child("");
                 Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
-                Log.d("childrenValue::", contactChildren.toString());
 
                 titles.clear();
                 images.clear();
                 for (DataSnapshot contact : contactChildren) {
-                    Log.d("titlevalue:: ", contact.child("title").getValue().toString());
-                    Log.d("imagevalue:: ", "" + contact.child("image").getValue().toString());
 
                     Iterable<DataSnapshot> contactChildren2 = contact.child("members").getChildren();
                     for(DataSnapshot contact2 : contactChildren2) {
-                        Log.d("membervalue:: ", contact2.child("memberName").getValue().toString());
                         if(contact2.child("memberUid").getValue().toString().equals(currentUser.getUid())) {
                             titles.add(contact.child("title").getValue().toString());
                             Bitmap decodedImage = decodeBase64(contact.child("image").getValue().toString());
@@ -217,8 +211,6 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
                             public void onClick(DialogInterface dialog,int which) {
 
                                 String encodedImage = encodeToBase64(photo, Bitmap.CompressFormat.JPEG, 100);
-                                Log.d("edcodedImage:: ", encodedImage);
-
 
                                 teamImage = encodedImage;
 
@@ -228,7 +220,6 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
                                     teamName = teamNameBox.getText().toString();
                                 }
 
-                                //TODO : How we handle image data?
                                 writeNewTeam(teamName, teamImage);
                             }});
 

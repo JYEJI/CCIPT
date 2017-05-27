@@ -59,6 +59,7 @@ public class TeamMemberActivity extends Activity {
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference memberRef = database.getReference("Teams").child(currentTeamName).child("members");
+    DatabaseReference userRef = database.getReference().child("Users");
 
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     String getMemberName = "", getMemberUid = "", getMemberPhoto = "";
@@ -148,9 +149,11 @@ public class TeamMemberActivity extends Activity {
                 Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
 
                 members.clear();
+                images.clear();
                 for (DataSnapshot contact : contactChildren) {
-                    members.add(contact.child("memberName").getValue().toString());
+
                     images.add(contact.child("memberPhoto").getValue().toString());
+                    members.add(contact.child("memberName").getValue().toString());
                 }
 
                 makeCustomList();
@@ -164,8 +167,8 @@ public class TeamMemberActivity extends Activity {
 
     }
 
+
     private void findMember(final String plusMember) {
-        DatabaseReference userRef = database.getReference().child("Users");
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -181,7 +184,7 @@ public class TeamMemberActivity extends Activity {
                     }
                 }
 
-                if(getMemberName.equals("") && getMemberUid.equals("") && getMemberPhoto.equals("")) {
+                if(getMemberName.equals("") && getMemberUid.equals("")) {
                     Toast.makeText(getBaseContext(), "There isn't that user.", Toast.LENGTH_LONG).show();
                 } else {
                     checkDuplicated(getMemberUid);
@@ -196,8 +199,7 @@ public class TeamMemberActivity extends Activity {
     };
 
     private void checkDuplicated(final String memberUid) {
-        DatabaseReference teamRef = database.getReference().child("Teams").child(currentTeamName).child("members");
-        teamRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        memberRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
@@ -279,7 +281,7 @@ public class TeamMemberActivity extends Activity {
         };
         public String getMemberPhoto() {
             return memberPhoto;
-        }
+        };
     }
 
 

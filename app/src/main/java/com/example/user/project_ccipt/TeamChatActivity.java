@@ -194,7 +194,7 @@ public class TeamChatActivity extends Activity {
             chatText.setText(messages.get(+position));
             chatTime.setText(times.get(+position));
             chatName.setText(names.get(+position));
-            //chatImage.setImageBitmap(photos.get(+position));
+
             return rowView;
         }
     }
