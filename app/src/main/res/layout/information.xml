@@ -43,7 +43,8 @@
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/nameTextView"
-        android:layout_toEndOf="@+id/nameTextView" />
+        android:layout_toEndOf="@+id/nameTextView"
+        android:inputType="text"/>
 
     <TextView
         android:id="@+id/locationTextView"
@@ -60,7 +61,8 @@
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/locationTextView"
-        android:layout_toEndOf="@+id/locationTextView" />
+        android:layout_toEndOf="@+id/locationTextView"
+        android:inputType="text"/>
 
     <Button
         android:id="@+id/submit_btn"

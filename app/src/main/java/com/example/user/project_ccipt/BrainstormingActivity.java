@@ -151,14 +151,7 @@ public class BrainstormingActivity extends Activity {
                 photo_imageview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener() {
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                doTakePhotoAction();
-                            }
-                        };
                         DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener(){
 
                             @Override
@@ -285,29 +278,12 @@ public class BrainstormingActivity extends Activity {
     }
 
 
-
-
-    public void doTakePhotoAction(){
-        /*Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(photo));
-        imageUri = Uri.fromFile(photo);
-        startActivityForResult(intent, REQUEST_PICTURE);*/
-    }
-
     public void doTakeAlbumAction(){
         Intent intent=new Intent(Intent.ACTION_PICK);
         intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
         intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent,REQUEST_PHOTO_ALBUM);
 
-    }
-    Bitmap loadPicture(){
-        File file=new File(Environment.getExternalStorageDirectory(),SAMPLEIMG);
-        BitmapFactory.Options options=new BitmapFactory.Options();
-        options.inSampleSize = 16;
-        return BitmapFactory.decodeFile(file.getAbsolutePath(),options);
     }
 
     @Override
