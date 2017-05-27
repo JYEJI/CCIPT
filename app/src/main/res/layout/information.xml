@@ -72,4 +72,7 @@
         android:layout_below="@+id/locationTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="95dp" />
+
+
+
 </RelativeLayout>
