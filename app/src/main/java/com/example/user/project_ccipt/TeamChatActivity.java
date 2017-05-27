@@ -3,6 +3,7 @@ package com.example.user.project_ccipt;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,6 +21,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.BitmapTypeRequest;
+import com.bumptech.glide.DrawableTypeRequest;
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -58,7 +62,7 @@ public class TeamChatActivity extends Activity {
     ArrayList<String> messages = new ArrayList<>();
     ArrayList<String> times = new ArrayList<>();
     ArrayList<String> names = new ArrayList<>();
-    ArrayList<Bitmap> photos = new ArrayList<>();
+    ArrayList<String> photos = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -139,17 +143,7 @@ public class TeamChatActivity extends Activity {
                 names.clear();
                 photos.clear();
                 for (DataSnapshot contact : contactChildren) {
-
-                    Uri imageUri = Uri.parse(contact.child("chatPhoto").getValue().toString());
-
-                    Bitmap bitmap = null;
-                    //TODO: exception error
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    photos.add(bitmap);
+                    photos.add(contact.child("chatPhoto").getValue().toString());
                     names.add(contact.child("chatName").getValue().toString());
                     times.add(contact.child("chatTime").getValue().toString());
                     messages.add(contact.child("chatText").getValue().toString());
@@ -194,10 +188,13 @@ public class TeamChatActivity extends Activity {
             TextView chatText = (TextView) rowView.findViewById(R.id.chatText);
             TextView chatTime = (TextView) rowView.findViewById(R.id.chatTime);
             ImageView chatImage = (ImageView) rowView.findViewById(R.id.chatImage);
+
+            Uri photoUri = Uri.parse(photos.get(+position));
+            Glide.with(TeamChatActivity.this).load(photoUri).into(chatImage);
             chatText.setText(messages.get(+position));
             chatTime.setText(times.get(+position));
             chatName.setText(names.get(+position));
-            chatImage.setImageBitmap(photos.get(+position));
+            //chatImage.setImageBitmap(photos.get(+position));
             return rowView;
         }
     }

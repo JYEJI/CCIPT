@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -53,7 +54,7 @@ public class TeamMemberActivity extends Activity {
 
     ListView memberList;
     ArrayList<String> members = new ArrayList<>();
-    ArrayList<Bitmap> images = new ArrayList<>();
+    ArrayList<String> images = new ArrayList<>();
 
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -148,19 +149,8 @@ public class TeamMemberActivity extends Activity {
 
                 members.clear();
                 for (DataSnapshot contact : contactChildren) {
-
-                    Uri imageUri = Uri.parse(contact.child("memberPhoto").getValue().toString());
-
-                    Bitmap bitmap = null;
-                    //TODO: exception error
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                     members.add(contact.child("memberName").getValue().toString());
-                    images.add(bitmap);
-
+                    images.add(contact.child("memberPhoto").getValue().toString());
                 }
 
                 makeCustomList();
@@ -262,8 +252,10 @@ public class TeamMemberActivity extends Activity {
             View rowView = inflater.inflate(R.layout.memberview, null, true);
             TextView member = (TextView) rowView.findViewById(R.id.memberName);
             ImageView image = (ImageView) rowView.findViewById(R.id.memberImage);
+
+            Uri photoUri = Uri.parse(images.get(+position));
+            Glide.with(TeamMemberActivity.this).load(photoUri).into(image);
             member.setText(members.get(+position));
-            image.setImageBitmap(images.get(+position));
             return rowView;
         }
     }
