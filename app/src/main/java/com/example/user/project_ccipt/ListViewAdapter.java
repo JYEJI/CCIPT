@@ -15,6 +15,7 @@ import java.util.ArrayList;
 /**
  * Created by user on 2017-05-12.
  */
+/*
 
 public class ListViewAdapter extends BaseAdapter {
     private ArrayList<ListViewItem> listViewItems = new ArrayList<ListViewItem>();
@@ -79,3 +80,4 @@ public class ListViewAdapter extends BaseAdapter {
         listViewItems.add(item);
     }
 }
+*/

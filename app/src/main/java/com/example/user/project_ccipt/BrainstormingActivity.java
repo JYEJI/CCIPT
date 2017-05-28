@@ -18,9 +18,12 @@ import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,6 +32,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -73,14 +77,14 @@ public class BrainstormingActivity extends Activity {
 
     ImageView photo_imageview;
     Bitmap photo;
+    String brainstromImage, brainstromTitle, brainstromDescription;
 
-    private ListView                m_ListView;
-    private ListViewAdapter   m_Adapter;
+    ListView brainstormListView;
 
 
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference brainstromsRef = database.getReference("Brainstroms");
+    DatabaseReference brainstormRef = database.getReference("Teams").child(currentTeamName).child("Brainstorms");
 
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -177,54 +181,29 @@ public class BrainstormingActivity extends Activity {
                     }
                 });
 
-                builder.setPositiveButton("Input",
+                // Setting Positive "Yes" Button
+                builder.setPositiveButton("Make",
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
+                            public void onClick(DialogInterface dialog,int which) {
 
-                                titles.add(titleBox.getText().toString());
-                                descriptions.add(descriptionBox.getText().toString());
+                                String encodedImage = encodeToBase64(photo, Bitmap.CompressFormat.JPEG, 100);
 
-                                m_Adapter = new ListViewAdapter();
-                                m_ListView = (ListView) findViewById(R.id.brainstromlistview);
-                                m_ListView.setAdapter(m_Adapter);
+                                brainstromImage = encodedImage;
 
-                                for (int i =0;i<titles.size();i++){
-                                    m_Adapter.addItem(images.get(i),titles.get(i),descriptions.get(i));
+                                if(titleBox.getText().toString().trim().length() > 10) {
+                                    Toast.makeText(getBaseContext(), "Length of team title is too long.\nYou should enter less than 10 characters", Toast.LENGTH_LONG).show();
+
+                                } else if (titleBox.getText().toString().trim().equals("") || descriptionBox.getText().toString().trim().equals("")){
+                                    Toast.makeText(getBaseContext(), "You should fill the boxes", Toast.LENGTH_LONG).show();
+                                } else {
+                                    brainstromTitle = titleBox.getText().toString().trim();
+                                    brainstromDescription = descriptionBox.getText().toString().trim();
                                 }
 
-                                m_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView parent, View v, int position, long id) {
-                                        // get item
-                                        ListViewItem item = (ListViewItem) parent.getItemAtPosition(position) ;
+                                writeNewBrainstrom(brainstromTitle, brainstromDescription, brainstromImage);
+                            }});
 
-                                        String titleStr = item.getTitle() ;
-                                        String descStr = item.getDesc() ;
-                                        Bitmap icon = item.getIcon() ;
-
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(BrainstormingActivity.this);
-
-                                        View customLayout=View.inflate(BrainstormingActivity.this,R.layout.view_brainstorming_item,null);
-
-                                        TextView title = (TextView)customLayout.findViewById(R.id.input_title);
-                                        title.setText(titleStr);
-
-                                        TextView description = (TextView)customLayout.findViewById(R.id.input_description);
-                                        title.setText(descStr);
-
-                                        ImageView idea_img = (ImageView) customLayout.findViewById(R.id.photo_imageview);
-                                        idea_img.setImageBitmap(icon);
-
-                                        builder.setView(customLayout);
-
-
-
-                                    }
-                                }) ;
-
-                            }
-                        });
-
+                // Setting Negative "NO" Button
                 builder.setNegativeButton("Cancel",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -237,7 +216,7 @@ public class BrainstormingActivity extends Activity {
             }
         });
 
-        brainstromsRef.addValueEventListener(new ValueEventListener() {
+        brainstormRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -246,27 +225,25 @@ public class BrainstormingActivity extends Activity {
 
                 //DataSnapshot contactSnapshot = dataSnapshot.child("");
                 Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
-                Log.d("childrenValue::", contactChildren.toString());
 
-                /*
                 titles.clear();
+                descriptions.clear();
                 images.clear();
                 for (DataSnapshot contact : contactChildren) {
 
+
                     Log.d("titlevalue:: ", contact.child("title").getValue().toString());
                     Log.d("imagevalue:: ", "" + contact.child("image").getValue().toString());
-                    Log.d("uservalue:: ", "" + contact.child("userUid").getValue().toString());
+                    Log.d("descriptionvalue:: ", "" + contact.child("description").getValue().toString());
 
                     Bitmap decodedImage = decodeBase64(contact.child("image").getValue().toString());
-                    if(contact.child("userUid").getValue().toString().equals(currentUser.getUid())) {
-                        titles.add(contact.child("title").getValue().toString());
-                        images.add(decodedImage);
-                    }
+                    images.add(decodedImage);
+                    titles.add(contact.child("title").getValue().toString());
+                    descriptions.add(contact.child("description").getValue().toString());
                 }
-                */
 
-                //TODO: how do i make custom list?
-                //makeCustomList();
+
+                makeCustomList();
             }
 
             @Override
@@ -275,6 +252,40 @@ public class BrainstormingActivity extends Activity {
             }
         });
 
+    }
+
+    public void makeCustomList() {
+        CustomList adapter = new CustomList(this);
+        brainstormListView = (ListView)findViewById(R.id.brainstromlistview);
+        brainstormListView.setAdapter(adapter);
+
+        brainstormListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getBaseContext(), titles.get(+position), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public class CustomList extends ArrayAdapter<String> {
+        private final Activity context;
+        public CustomList(Activity context) {
+            super(context, R.layout.memberview, titles);
+            this.context = context;
+        }
+
+        @Override
+        public View getView(int position, View view, ViewGroup parent) {
+            LayoutInflater inflater = context.getLayoutInflater();
+            View rowView = inflater.inflate(R.layout.listitem, null, true);
+            ImageView imageView = (ImageView) rowView.findViewById(R.id.brainstromImage);
+            TextView title = (TextView) rowView.findViewById(R.id.brainstromTitle);
+            TextView description = (TextView) rowView.findViewById(R.id.brainstromDescription);
+            imageView.setImageBitmap(images.get(+position));
+            title.setText(titles.get(+position));
+            description.setText(descriptions.get(+position));
+            return rowView;
+        }
     }
 
 
@@ -303,21 +314,20 @@ public class BrainstormingActivity extends Activity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                images.add(photo);
             }
         }
     }
 
-    private class BrainStrom {
-        BrainStrom() {};
-        BrainStrom(String Btitle, String Bdescription, String Bimage) {
+    private class Brainstorm {
+        Brainstorm() {};
+        Brainstorm(String Btitle, String Bdescription, String Bimage, String Bname) {
             title = Btitle;
             description = Bdescription;
             image = Bimage;
+            writer = Bname;
         };
 
-        private String title, description, image;
+        private String title, description, image, writer;
 
         public String getTitle() {
             return title;
@@ -327,6 +337,9 @@ public class BrainstormingActivity extends Activity {
         }
         public String getImage() {
             return image;
+        }
+        public String getWriter() {
+            return writer;
         }
     }
 
@@ -339,6 +352,12 @@ public class BrainstormingActivity extends Activity {
     public static Bitmap decodeBase64(String input) {
         byte[] decodedBytes = Base64.decode(input, 0);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
+
+    private void writeNewBrainstrom(String title, String description, String image) {
+        Brainstorm brainstorm = new Brainstorm(title, description, image, currentUser.getDisplayName());
+
+        brainstormRef.push().setValue(brainstorm);
     }
 
 }
