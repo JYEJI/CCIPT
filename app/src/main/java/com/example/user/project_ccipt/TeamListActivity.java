@@ -246,13 +246,15 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
 
     private static class Team {
         Team() {};
-        Team(String title, String image) {
+        Team(String title, String image, Dummy members) {
             teamTitle = title;
             teamImage = image;
+            teamMember = members;
         };
 
         //TODO : Developing userAddress
         private String teamTitle, teamImage;
+        private Dummy teamMember;
 
         public String getTitle() {
             return teamTitle;
@@ -262,6 +264,9 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
         };
         public void setTitle(String currentTeam) {
             teamTitle = currentTeam;
+        }
+        public Dummy getMembers() {
+            return teamMember;
         }
     }
 
@@ -287,13 +292,28 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    private static class Dummy {
+        Dummy() {};
+        Dummy(Member member) {
+            dummyMember = member;
+        }
+
+        private Member dummyMember;
+
+        public Member getDummyMember() {
+            return dummyMember;
+        };
+    }
+
 
     private void writeNewTeam(String title, String image) {
-        Team team = new Team(title, image);
         Member member = new Member(currentUser.getDisplayName(), currentUser.getUid(), currentUser.getPhotoUrl().toString());
+        Dummy dummy = new Dummy(member);
+        Team team = new Team(title, image, dummy);
 
         teamRef.child(team.getTitle()).setValue(team);
         teamRef.child(team.getTitle()).child("members").push().setValue(member);
+        teamRef.child(team.getTitle()).child("members").child("dummyMember").removeValue();
     }
 
     public static String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality) {

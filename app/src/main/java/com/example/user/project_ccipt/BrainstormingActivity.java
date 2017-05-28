@@ -17,8 +17,10 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -265,6 +267,8 @@ public class BrainstormingActivity extends Activity {
                 Toast.makeText(getBaseContext(), titles.get(+position), Toast.LENGTH_LONG).show();
             }
         });
+
+        registerForContextMenu(brainstormListView);
     }
 
     public class CustomList extends ArrayAdapter<String> {
@@ -286,6 +290,39 @@ public class BrainstormingActivity extends Activity {
             description.setText(descriptions.get(+position));
             return rowView;
         }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        // 컨텍스트 메뉴가 최초로 한번만 호출되는 콜백 메서드
+        Log.d("test", "onCreateContextMenu");
+//        getMenuInflater().inflate(R.menu.main, menu);
+
+        menu.setHeaderTitle("따이뜰");
+        menu.add(0,1,100,"빨강");
+        menu.add(0,2,100,"녹색");
+        menu.add(0,3,100,"파랑");
+    }
+
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        // 롱클릭했을 때 나오는 context Menu 의 항목을 선택(클릭) 했을 때 호출
+        switch(item.getItemId()) {
+            case 1 :// 빨강 메뉴 선택시
+                Toast.makeText(getBaseContext(), "RED", Toast.LENGTH_LONG).show();
+                return true;
+            case 2 :// 녹색 메뉴 선택시
+                Toast.makeText(getBaseContext(), "GREEN", Toast.LENGTH_LONG).show();
+                return true;
+            case 3 :// 파랑 메뉴 선택시
+                Toast.makeText(getBaseContext(), "BLUE", Toast.LENGTH_LONG).show();
+                return true;
+        }
+
+        return super.onContextItemSelected(item);
     }
 
 
