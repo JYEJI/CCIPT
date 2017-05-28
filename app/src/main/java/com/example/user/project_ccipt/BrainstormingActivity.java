@@ -77,7 +77,7 @@ public class BrainstormingActivity extends Activity {
 
     ImageView photo_imageview;
     Bitmap photo;
-    String brainstromImage, brainstromTitle, brainstromDescription;
+    String brainstormImage = "", brainstormTitle = "", brainstormDescription = "";
 
     ListView brainstormListView;
 
@@ -97,7 +97,7 @@ public class BrainstormingActivity extends Activity {
         BitmapDrawable drawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.ccipt);
         photo = drawable.getBitmap();
 
-        TextView teamNameTextView = (TextView) findViewById(R.id.BrainStromTeamName);
+        TextView teamNameTextView = (TextView) findViewById(R.id.BrainStormTeamName);
         teamNameTextView.setText(currentTeamName);
 
         brainstorming_button = (Button) findViewById(R.id.brainstorming_button);
@@ -188,7 +188,7 @@ public class BrainstormingActivity extends Activity {
 
                                 String encodedImage = encodeToBase64(photo, Bitmap.CompressFormat.JPEG, 100);
 
-                                brainstromImage = encodedImage;
+                                brainstormImage = encodedImage;
 
                                 if(titleBox.getText().toString().trim().length() > 10) {
                                     Toast.makeText(getBaseContext(), "Length of team title is too long.\nYou should enter less than 10 characters", Toast.LENGTH_LONG).show();
@@ -196,11 +196,11 @@ public class BrainstormingActivity extends Activity {
                                 } else if (titleBox.getText().toString().trim().equals("") || descriptionBox.getText().toString().trim().equals("")){
                                     Toast.makeText(getBaseContext(), "You should fill the boxes", Toast.LENGTH_LONG).show();
                                 } else {
-                                    brainstromTitle = titleBox.getText().toString().trim();
-                                    brainstromDescription = descriptionBox.getText().toString().trim();
+                                    brainstormTitle = titleBox.getText().toString().trim();
+                                    brainstormDescription = descriptionBox.getText().toString().trim();
                                 }
 
-                                writeNewBrainstrom(brainstromTitle, brainstromDescription, brainstromImage);
+                                writeNewBrainstorm(brainstormTitle, brainstormDescription, brainstormImage);
                             }});
 
                 // Setting Negative "NO" Button
@@ -256,7 +256,7 @@ public class BrainstormingActivity extends Activity {
 
     public void makeCustomList() {
         CustomList adapter = new CustomList(this);
-        brainstormListView = (ListView)findViewById(R.id.brainstromlistview);
+        brainstormListView = (ListView)findViewById(R.id.brainstormlistview);
         brainstormListView.setAdapter(adapter);
 
         brainstormListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -278,9 +278,9 @@ public class BrainstormingActivity extends Activity {
         public View getView(int position, View view, ViewGroup parent) {
             LayoutInflater inflater = context.getLayoutInflater();
             View rowView = inflater.inflate(R.layout.listitem, null, true);
-            ImageView imageView = (ImageView) rowView.findViewById(R.id.brainstromImage);
-            TextView title = (TextView) rowView.findViewById(R.id.brainstromTitle);
-            TextView description = (TextView) rowView.findViewById(R.id.brainstromDescription);
+            ImageView imageView = (ImageView) rowView.findViewById(R.id.brainstormImage);
+            TextView title = (TextView) rowView.findViewById(R.id.brainstormTitle);
+            TextView description = (TextView) rowView.findViewById(R.id.brainstormDescription);
             imageView.setImageBitmap(images.get(+position));
             title.setText(titles.get(+position));
             description.setText(descriptions.get(+position));
@@ -354,7 +354,7 @@ public class BrainstormingActivity extends Activity {
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
-    private void writeNewBrainstrom(String title, String description, String image) {
+    private void writeNewBrainstorm(String title, String description, String image) {
         Brainstorm brainstorm = new Brainstorm(title, description, image, currentUser.getDisplayName());
 
         brainstormRef.push().setValue(brainstorm);

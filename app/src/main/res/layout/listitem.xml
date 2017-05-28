@@ -4,28 +4,28 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/brainstromImage"
+        android:id="@+id/brainstormImage"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_alignParentLeft="true"
         android:layout_marginRight="8dp"/>
 
     <TextView
-        android:id="@+id/brainstromTitle"
+        android:id="@+id/brainstormTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/brainstromImage"
-        android:layout_toRightOf="@+id/brainstromImage"
+        android:layout_alignTop="@+id/brainstormImage"
+        android:layout_toRightOf="@+id/brainstormImage"
         android:textSize="17dp"
         android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/brainstromDescription"
+        android:id="@+id/brainstormDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/brainstromTitle"
+        android:layout_below="@+id/brainstormTitle"
         android:layout_marginTop="1dip"
-        android:layout_toRightOf="@+id/brainstromImage"
+        android:layout_toRightOf="@+id/brainstormImage"
         android:textSize="15dip"
         />
 
