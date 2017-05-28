@@ -100,12 +100,17 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
                 images.clear();
                 for (DataSnapshot contact : contactChildren) {
 
-                    Iterable<DataSnapshot> contactChildren2 = contact.child("members").getChildren();
-                    for(DataSnapshot contact2 : contactChildren2) {
-                        if(contact2.child("memberUid").getValue().toString().equals(currentUser.getUid())) {
-                            titles.add(contact.child("title").getValue().toString());
-                            Bitmap decodedImage = decodeBase64(contact.child("image").getValue().toString());
-                            images.add(decodedImage);
+                    if(contact.child("members").getChildrenCount() == 0) {
+                        String contactName = contact.getKey();
+                        teamRef.child(contactName).removeValue();
+                    } else{
+                        Iterable<DataSnapshot> contactChildren2 = contact.child("members").getChildren();
+                        for(DataSnapshot contact2 : contactChildren2) {
+                            if(contact2.child("memberUid").getValue().toString().equals(currentUser.getUid())) {
+                                titles.add(contact.child("title").getValue().toString());
+                                Bitmap decodedImage = decodeBase64(contact.child("image").getValue().toString());
+                                images.add(decodedImage);
+                            }
                         }
                     }
                 }
