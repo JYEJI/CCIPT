@@ -96,8 +96,8 @@ public class AppointmentActivity extends FragmentActivity{
             public void onClick(View v) {
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 //37.282944 127.046250
-                LatLng boundSW = new LatLng(37.282844,127.046150);
-                LatLng boundNE = new LatLng(37.283044,127.046350);
+                LatLng boundSW = new LatLng(37.281944,127.045250);
+                LatLng boundNE = new LatLng(37.283944,127.047250);
                 LatLngBounds latLngBounds = new LatLngBounds(boundSW, boundNE);
                 builder.setLatLngBounds(latLngBounds);
                 try {
