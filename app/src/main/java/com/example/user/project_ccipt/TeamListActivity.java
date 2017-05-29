@@ -262,7 +262,7 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
 
     private static class Team {
         Team() {};
-        Team(String title, String image, Dummy members) {
+        Team(String title, String image, Leader members) {
             teamTitle = title;
             teamImage = image;
             teamMember = members;
@@ -270,7 +270,7 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
 
         //TODO : Developing userAddress
         private String teamTitle, teamImage;
-        private Dummy teamMember;
+        private Leader teamMember;
 
         public String getTitle() {
             return teamTitle;
@@ -281,7 +281,7 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
         public void setTitle(String currentTeam) {
             teamTitle = currentTeam;
         }
-        public Dummy getMembers() {
+        public Leader getMembers() {
             return teamMember;
         }
     }
@@ -308,24 +308,24 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private static class Dummy {
-        Dummy() {};
-        Dummy(Member member) {
-            dummyMember = member;
+    private static class Leader {
+        Leader() {};
+        Leader(Member member) {
+            leaderMember = member;
         }
 
-        private Member dummyMember;
+        private Member leaderMember;
 
-        public Member getDummyMember() {
-            return dummyMember;
+        public Member getLeaderMember() {
+            return leaderMember;
         };
     }
 
 
     private void writeNewTeam(String title, String image) {
         Member member = new Member(currentUser.getDisplayName(), currentUser.getUid(), currentUser.getPhotoUrl().toString());
-        Dummy dummy = new Dummy(member);
-        Team team = new Team(title, image, dummy);
+        Leader leader = new Leader(member);
+        Team team = new Team(title, image, leader);
 
         teamRef.child(team.getTitle()).setValue(team);
         teamRef.child(team.getTitle()).child("members").push().setValue(member);

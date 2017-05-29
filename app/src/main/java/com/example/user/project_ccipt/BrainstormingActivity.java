@@ -369,7 +369,7 @@ public class BrainstormingActivity extends Activity {
         }
     }
 
-    private class Brainstorm {
+    private static class Brainstorm {
         Brainstorm() {};
         Brainstorm(String Btitle, String Bdescription, String Bimage, String Bname) {
             title = Btitle;
