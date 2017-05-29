@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
@@ -70,6 +72,9 @@ public class BrainstormingActivity extends Activity {
     static int REQUEST_PHOTO_ALBUM=2;
     //첫번째 이미지 아이콘 샘플 이다.
     static String SAMPLEIMG="ic_launcher.png";
+
+
+    public final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
     Button brainstorming_button, appointment_button, teamchat_button, teammember_button, plus_button;
 
@@ -163,7 +168,16 @@ public class BrainstormingActivity extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                doTakeAlbumAction();
+
+                                if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                    if (shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                                        requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                                    } else {
+                                        requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                                    }
+                                } else {
+                                    doTakeAlbumAction();
+                                }
                             }
                         };
                         DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener(){
@@ -395,6 +409,22 @@ public class BrainstormingActivity extends Activity {
         Brainstorm brainstorm = new Brainstorm(title, description, image, currentUser.getDisplayName());
 
         brainstormRef.push().setValue(brainstorm);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch(requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                Log.d(TAG, "5");
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    doTakeAlbumAction();
+                } else {
+                    Toast.makeText(this, "If you wanna use this, you permit.", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                return;
+            }
+        }
     }
 
 }

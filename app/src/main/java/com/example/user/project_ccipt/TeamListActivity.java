@@ -1,9 +1,12 @@
 package com.example.user.project_ccipt;
 
+import android.*;
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
@@ -77,6 +81,8 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
 
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+    // Assume thisActivity is the current activity
+    public final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +98,6 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-
-                //DataSnapshot contactSnapshot = dataSnapshot.child("");
                 Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
 
                 titles.clear();
@@ -171,6 +175,8 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.teamplus_button:
+
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(TeamListActivity.this);
                 builder.setTitle("Make a Team")
                         .setMessage("Team Name");
@@ -190,7 +196,17 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                doTakeAlbumAction();
+
+                                if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                    if (shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                                        requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                                    } else {
+                                        requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                                    }
+                                } else {
+                                    doTakeAlbumAction();
+                                }
+
                             }
                         };
                         DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener(){
@@ -349,6 +365,22 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch(requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                Log.d(TAG, "5");
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    doTakeAlbumAction();
+                } else {
+                    Toast.makeText(this, "If you wanna use this, you permit.", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                return;
             }
         }
     }
