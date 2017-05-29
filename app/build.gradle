@@ -35,6 +35,7 @@ dependencies {
     // Google
     compile 'com.google.android.gms:play-services-auth:10.2.4'
     compile 'com.google.android.gms:play-services-maps:10.2.4'
+    compile 'com.google.android.gms:play-services-gcm:10.2.4'
     compile 'com.google.android.gms:play-services-places:10.2.4'
     compile 'com.google.android.gms:play-services-location:10.2.4'
 
