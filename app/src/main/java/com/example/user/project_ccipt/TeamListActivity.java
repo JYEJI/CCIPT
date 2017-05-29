@@ -328,8 +328,6 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
         Team team = new Team(title, image, leader);
 
         teamRef.child(team.getTitle()).setValue(team);
-        teamRef.child(team.getTitle()).child("members").push().setValue(member);
-        teamRef.child(team.getTitle()).child("members").child("dummyMember").removeValue();
     }
 
     public static String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality) {
