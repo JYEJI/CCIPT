@@ -237,14 +237,15 @@ public class TeamListActivity extends Activity implements View.OnClickListener {
 
                                 if(teamNameBox.getText().toString().trim().length() > 20) {
                                     Toast.makeText(getBaseContext(), "Length of team title is too long.\nYou should enter less than 20 characters", Toast.LENGTH_LONG).show();
-
-                                } else if(!teamNameBox.getText().toString().trim().equals("")) {
+                                } else if(teamNameBox.getText().toString().trim().equals("")) {
+                                    Toast.makeText(getBaseContext(), "You should write team name.", Toast.LENGTH_LONG).show();
+                                } else {
                                     teamName = teamNameBox.getText().toString().trim();
+                                    writeNewTeam(teamName, teamImage);
                                 }
 
 
 
-                                writeNewTeam(teamName, teamImage);
                             }});
 
                 // Setting Negative "NO" Button

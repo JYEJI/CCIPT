@@ -128,7 +128,11 @@ public class TeamMemberActivity extends Activity {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        findMember(input.getText().toString().trim());
+                        if(input.getText().toString().trim().equals("")) {
+                            Toast.makeText(getBaseContext(), "You should write user name.", Toast.LENGTH_LONG).show();
+                        } else {
+                            findMember(input.getText().toString().trim());
+                        }
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

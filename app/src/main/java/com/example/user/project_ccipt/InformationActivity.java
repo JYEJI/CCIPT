@@ -91,7 +91,7 @@ public class InformationActivity extends AppCompatActivity implements View.OnCli
                 userlist = null;
 
 
-                String str = user_location.getText().toString();
+                String str = user_location.getText().toString().trim();
                 try {
                     userlist = geocoder.getFromLocationName(
                             str, // 지역 이름

@@ -235,22 +235,12 @@ public class BrainstormingActivity extends Activity {
         brainstormRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                //titles.add(title);
-                Log.d("avalue::", dataSnapshot.getKey());
-
-                //DataSnapshot contactSnapshot = dataSnapshot.child("");
                 Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
 
                 titles.clear();
                 descriptions.clear();
                 images.clear();
                 for (DataSnapshot contact : contactChildren) {
-
-
-                    Log.d("titlevalue:: ", contact.child("title").getValue().toString());
-                    Log.d("imagevalue:: ", "" + contact.child("image").getValue().toString());
-                    Log.d("descriptionvalue:: ", "" + contact.child("description").getValue().toString());
 
                     Bitmap decodedImage = decodeBase64(contact.child("image").getValue().toString());
                     images.add(decodedImage);
