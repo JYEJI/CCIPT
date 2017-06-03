@@ -169,7 +169,7 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
 
         userimage = currentUser.getPhotoUrl().toString();
         username = currentUser.getDisplayName().toString();
-        useremail = currentUser.getEmail().toString();
+        useremail = currentUser.getEmail();
 
         Uri photoUri = Uri.parse(userimage);
         Glide.with(TeamListActivity.this).load(photoUri).into(nav_userImage);
