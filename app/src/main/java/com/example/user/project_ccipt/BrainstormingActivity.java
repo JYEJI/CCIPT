@@ -13,9 +13,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.util.Log;
@@ -30,9 +32,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,13 +91,19 @@ public class BrainstormingActivity extends Activity {
     String brainstormImage = "", brainstormTitle = "", brainstormDescription = "";
 
     ListView brainstormListView;
-
+    RelativeLayout relativeLayout;
 
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference brainstormRef = database.getReference("Teams").child(currentTeamName).child("Brainstorms");
 
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+
+    ImageButton setting_bt;
+    NavigationView navigationView;
+
+    boolean buttoncliked = false;
 
 
     @Override
@@ -103,6 +113,8 @@ public class BrainstormingActivity extends Activity {
 
         BitmapDrawable drawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.ccipt);
         photo = drawable.getBitmap();
+        brainstormListView = (ListView)findViewById(R.id.brainstormlistview);
+        relativeLayout=(RelativeLayout)findViewById(R.id.buttons);
 
         TextView teamNameTextView = (TextView) findViewById(R.id.BrainStormTeamName);
         teamNameTextView.setText(currentTeamName);
@@ -255,6 +267,34 @@ public class BrainstormingActivity extends Activity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+
+        setting_bt = (ImageButton) this.findViewById(R.id.br_setting_bt);
+        navigationView = (NavigationView)this.findViewById(R.id.nav_view);
+
+        final DrawerLayout drawer = (DrawerLayout) this.findViewById(R.id.drawer_layout);
+        setting_bt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                //Opens the Drawer
+                if(!buttoncliked)
+                {
+                    drawer.openDrawer(navigationView);
+                    drawer.bringToFront();
+                    buttoncliked=true;
+                }
+                else
+                {
+                    drawer.closeDrawer(navigationView);
+                    brainstormListView.bringToFront();
+                    relativeLayout.bringToFront();
+                    buttoncliked=false;
+                }
+
+
             }
         });
 

@@ -1,30 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#59d5fe"
         android:orientation="vertical">
 
+        <ImageButton
+            android:id="@+id/setting_bt"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:backgroundTint="#00000000"
+            android:src="@drawable/setting_button" />
+
         <TextView
             android:id="@+id/TeamMemberTeamName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="1dp"
             android:layout_marginTop="1dp"
             android:elevation="1dp"
             android:paddingTop="5dp"
-            android:text="Team Name"
+            android:text="Team List"
             android:textColor="#FFFFFF"
             android:textSize="30dp"
             android:textStyle="bold" />
+    </RelativeLayout>
 
-    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:openDrawer="start">
+
+        <include
+            layout="@layout/app_bar_user_setting"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:headerLayout="@layout/nav_header_user_setting"
+            app:menu="@menu/activity_user_setting_drawer" />
+
+    </android.support.v4.widget.DrawerLayout>
 
     <ListView
         android:id="@+id/memberListView"
@@ -32,13 +67,12 @@
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp"
-        android:layout_marginTop="50dp"
         android:orientation="horizontal"/>
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/relativeLayout"
+        android:id="@+id/buttons"
         android:layout_centerHorizontal="true">
 
         <Button
@@ -87,7 +121,7 @@
         android:id="@+id/memberplus_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignEnd="@+id/relativeLayout"
+        android:layout_alignEnd="@+id/buttons"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="60dp"
         android:layout_marginEnd="11dp"
@@ -95,4 +129,6 @@
         android:text="+"
         android:textColor="#f8fdf9" />
 
-</RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>

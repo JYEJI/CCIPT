@@ -23,18 +23,20 @@
 
     <TextView
         android:id="@+id/chatText_other"
-        android:layout_width="250dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/chatName_other"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/chatImage_other"
-        android:textSize="12dp" />
+        android:textSize="12dp"
+        android:background="@drawable/left_box_01"/>
 
     <TextView
         android:id="@+id/chatTime_other"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/chatText_other"
+        android:layout_alignEnd="@+id/chatText_other"
+        android:layout_below="@+id/chatText_other"
         android:textSize="7dp" />
 
 </RelativeLayout>

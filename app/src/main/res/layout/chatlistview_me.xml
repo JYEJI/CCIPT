@@ -23,19 +23,22 @@
 
     <TextView
         android:id="@+id/chatText_me"
-        android:layout_width="250dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/chatName_me"
         android:layout_marginTop="1dip"
         android:layout_toLeftOf="@+id/chatImage_me"
         android:gravity="end"
-        android:textSize="12dp" />
+        android:textSize="12dp"
+        android:textColor="#000000"
+        android:background="@drawable/right_box_01"/>
 
     <TextView
         android:id="@+id/chatTime_me"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/chatText_me"
-        android:textSize="7dp" />
+        android:textSize="7dp"
+        android:layout_below="@+id/chatText_me"
+        android:layout_alignStart="@+id/chatText_me"/>
 
 </RelativeLayout>

@@ -35,7 +35,7 @@ public class InformationActivity extends AppCompatActivity implements View.OnCli
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
     String userProviderId, userName, userUid,userCountryName,userAddress;
-    String[] userAddressList;
+    boolean userinput = false;
     double userLatitude, userLongitude;
     Uri userPhotoUrl;
     List<Address> userlist;
@@ -112,9 +112,8 @@ public class InformationActivity extends AppCompatActivity implements View.OnCli
                         userLongitude = userlist.get(0).getLongitude();    // 경도
                     }
                 }
-
-
-                writeNewUser(userName, userUid, userPhotoUrl, userAddress ,userCountryName, userLatitude, userLongitude);
+                userinput = true;
+                writeNewUser(userName, userUid, userPhotoUrl, userAddress ,userCountryName, userLatitude, userLongitude,userinput);
 
                 Intent intent = new Intent(this,TeamListActivity.class);
                 startActivity(intent);
@@ -125,9 +124,9 @@ public class InformationActivity extends AppCompatActivity implements View.OnCli
     }
 
 
-    private class User {
+    public class User {
         User() {};
-        User(String userName, String userUid, Uri userPhotoUrl,String userAddress,String userCountryName, double userLatitude, double userLongitude) {
+        User(String userName, String userUid, Uri userPhotoUrl,String userAddress,String userCountryName, double userLatitude, double userLongitude, boolean userinput) {
             name = userName;
             uid = userUid;
             photoUrl = userPhotoUrl;
@@ -135,12 +134,14 @@ public class InformationActivity extends AppCompatActivity implements View.OnCli
             latitude = userLatitude;
             longitude = userLongitude;
             address = userAddress;
+            input = userinput;
         };
 
         //TODO : Developing userAddress
         private String name, uid, countryName,address;
         private Uri photoUrl;
         private double latitude,longitude;
+        private boolean input;
 
         public Uri getPhotoUrl() {
             return photoUrl;
@@ -155,10 +156,11 @@ public class InformationActivity extends AppCompatActivity implements View.OnCli
         public String getCountryName(){ return countryName;}
         public double getLatitude(){ return latitude;}
         public double getLongitude(){ return longitude; }
+        public boolean getInput(){ return input; }
     }
 
-    private void writeNewUser(String name, String uid, Uri photourl, String address,String countryName, double latitude, double longitude) {
-        User user = new User(name, uid, photourl, address, countryName,latitude,longitude);
+    private void writeNewUser(String name, String uid, Uri photourl, String address,String countryName, double latitude, double longitude, boolean input) {
+        User user = new User(name, uid, photourl, address, countryName,latitude,longitude,input);
 
         database.getReference().child("Users").child(uid).child("name").setValue(user.getName());
         database.getReference().child("Users").child(uid).child("uid").setValue(user.getUid());
@@ -167,5 +169,6 @@ public class InformationActivity extends AppCompatActivity implements View.OnCli
         database.getReference().child("Users").child(uid).child("countryName").setValue(user.getCountryName().toString());
         database.getReference().child("Users").child(uid).child("latitude").setValue(user.getLatitude());
         database.getReference().child("Users").child(uid).child("longitude").setValue(user.getLongitude());
+        database.getReference().child("Users").child(uid).child("input").setValue(user.getInput());
     }
 }

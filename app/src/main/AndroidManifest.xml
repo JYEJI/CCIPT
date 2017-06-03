@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.user.project_ccipt">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -12,11 +12,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBYz0ZTp5OF3XRlG77E4L1yjYo4tGBO2SA"/>
-
+            android:value="AIzaSyBYz0ZTp5OF3XRlG77E4L1yjYo4tGBO2SA" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -25,20 +23,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SplashActivity"
-            android:screenOrientation="portrait"
+        <activity
+            android:name=".SplashActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:theme="@android:style/Theme.NoTitleBar">
-        </activity>
-        <activity android:name=".InformationActivity"/>
-        <activity android:name=".SigninActivity"/>
-        <activity android:name=".TeamListActivity"></activity>
-        <activity android:name=".BrainstormingActivity"></activity>
-        <activity android:name=".AppointmentActivity"></activity>
-        <activity android:name=".TeamChatActivity"></activity>
-        <activity android:name=".TeamMemberActivity"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name=".InformationActivity" />
+        <activity android:name=".SigninActivity" />
+        <activity android:name=".TeamListActivity" />
+        <activity android:name=".BrainstormingActivity" />
+        <activity android:name=".AppointmentActivity" />
+        <activity android:name=".TeamChatActivity" />
+        <activity android:name=".TeamMemberActivity" />
+        <activity
+            android:name=".UserSetting"
+            android:label="@string/title_activity_user_setting"
+            android:theme="@style/AppTheme"></activity>
     </application>
-
-
 
 </manifest>

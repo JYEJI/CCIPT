@@ -2,19 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:baselineAligned="false">
 
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#59d5fe"
         android:orientation="vertical">
 
+        <ImageButton
+            android:id="@+id/setting_bt"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:backgroundTint="#00000000"
+            android:src="@drawable/setting_button" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="1dp"
             android:layout_marginTop="1dp"
             android:elevation="1dp"
@@ -23,18 +35,40 @@
             android:textColor="#FFFFFF"
             android:textSize="30dp"
             android:textStyle="bold" />
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
+
+        <android.support.v4.widget.DrawerLayout
+            android:id="@+id/drawer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:openDrawer="start">
+
+            <include
+                layout="@layout/app_bar_user_setting"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"/>
+
+            <android.support.design.widget.NavigationView
+                android:id="@+id/nav_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                app:headerLayout="@layout/nav_header_user_setting"
+                app:menu="@menu/activity_user_setting_drawer" />
+
+        </android.support.v4.widget.DrawerLayout>
 
         <ListView
             android:id="@+id/teamListView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/plus_button"/>
+
 
         <Button
             android:id="@+id/teamplus_button"
@@ -49,5 +83,6 @@
             android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
+
 
 </LinearLayout>
