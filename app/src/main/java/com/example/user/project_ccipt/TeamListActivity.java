@@ -107,6 +107,8 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
     // Assume thisActivity is the current activity
     public final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
+    boolean duplicatedFlag;
+
     ImageButton setting_bt;
     NavigationView navigationView;
     View headerLayout;
@@ -374,7 +376,9 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
                                     Toast.makeText(getBaseContext(), "You should write team name.", Toast.LENGTH_LONG).show();
                                 } else {
                                     teamName = teamNameBox.getText().toString().trim();
-                                    writeNewTeam(teamName, teamImage);
+                                    //writeNewTeam(teamName, teamImage);
+
+                                    checkDuplicated(teamName);
                                 }
 
 
@@ -516,6 +520,36 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
             }
         }
     }
+
+    private void checkDuplicated(final String teamtitle) {
+
+        teamRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
+
+                for (DataSnapshot contact : contactChildren) {
+
+                    if(contact.getKey().equals(teamtitle)) {
+                        duplicatedFlag = true;
+                    } else {
+                        duplicatedFlag = false;
+                    }
+                }
+
+                if(duplicatedFlag) {
+                    Toast.makeText(getBaseContext(), "That name of team already exist.", Toast.LENGTH_LONG).show();
+                } else {
+                    writeNewTeam(teamName, teamImage);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+    };
 
 }
 
