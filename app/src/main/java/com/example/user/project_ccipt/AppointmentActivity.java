@@ -3,6 +3,8 @@ package com.example.user.project_ccipt;
 import android.*;
 import android.Manifest;
 import android.app.Activity;
+import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -11,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +21,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,14 +71,21 @@ public class AppointmentActivity extends FragmentActivity{
     private ArrayList<String> addresslist = new ArrayList<>();
     private ArrayList<String> datetimelist = new ArrayList<>();
 
-    private ArrayList<Float> lng_ary = new ArrayList<>();
-    private ArrayList<Float> lat_ary = new ArrayList<>();
+    private Double teamlat = 0.0D, teamlng = 0.0D;
+    private ArrayList<String> memberUids = new ArrayList();
+    private ArrayList<Double> lng_ary = new ArrayList<>();
+    private ArrayList<Double> lat_ary = new ArrayList<>();
 
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference appointmentRef = database.getReference("Teams").child(currentTeamName).child("Appointments");
+    DatabaseReference memberRef = database.getReference("Teams").child(currentTeamName).child("members");
+    DatabaseReference userRef = database.getReference("Users");
 
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+    DatePicker datePicker;
+    //TimePicker timePicker;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,6 +100,8 @@ public class AppointmentActivity extends FragmentActivity{
         teamchat_button = (Button) findViewById(R.id.teamchat_button);
         teammember_button = (Button) findViewById(R.id.teammember_button);
         plus_btn = (Button) findViewById(R.id.plus_button);
+
+        getLatLng();
 
         brainstorming_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,8 +140,10 @@ public class AppointmentActivity extends FragmentActivity{
             public void onClick(View v) {
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 //37.282944 127.046250
-                LatLng boundSW = new LatLng(37.280944,127.044250);
-                LatLng boundNE = new LatLng(37.284944,127.048250);
+                Log.d("teamlatlng2", teamlat + ", " + teamlng);
+
+                LatLng boundSW = new LatLng(teamlat - 0.0025D,teamlng - 0.0025D);
+                LatLng boundNE = new LatLng(teamlat + 0.0025D,teamlng + 0.0025D);
                 LatLngBounds latLngBounds = new LatLngBounds(boundSW, boundNE);
                 builder.setLatLngBounds(latLngBounds);
                 try {
@@ -137,6 +153,33 @@ public class AppointmentActivity extends FragmentActivity{
                 } catch (GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(AppointmentActivity.this);
+
+                View customLayout=View.inflate(AppointmentActivity.this,R.layout.appointment_dialog,null);
+                dialog.setView(customLayout);
+
+                //datePicker = (DatePicker) findViewById(R.id.datePicker);
+                //final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
+
+                dialog.setPositiveButton("Appoint",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int which) {
+
+                                //Log.d("asdf", "" + datePicker.getYear() + datePicker.getMonth() + datePicker.getDayOfMonth());
+                            }});
+
+                // Setting Negative "NO" Button
+                dialog.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Write your code here to execute after dialog
+                                dialog.cancel();
+                            }
+                        });
+
+                dialog.create();
+                dialog.show();
 
 
                 appointmentRef.addValueEventListener(new ValueEventListener() {
@@ -237,5 +280,61 @@ public class AppointmentActivity extends FragmentActivity{
         Appointment appointment = new Appointment(name, datetime, address);
 
         appointmentRef.push().setValue(appointment);
+    }
+
+    public void getLatLng() {
+        lat_ary.clear();
+        lng_ary.clear();
+        memberRef.addListenerForSingleValueEvent(new ValueEventListener(){
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
+
+                for (DataSnapshot contact : contactChildren) {
+                    memberUids.add(contact.child("memberUid").getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
+
+                for (DataSnapshot contact : contactChildren) {
+                    for(int i = 0; i < memberUids.size(); i ++) {
+                        if(contact.getKey().equals(memberUids.get(i))) {
+                            lat_ary.add((Double)contact.child("latitude").getValue());
+                            lng_ary.add((Double)contact.child("longitude").getValue());
+                        }
+                    }
+                }
+
+                if(!lat_ary.isEmpty() && !lng_ary.isEmpty()) {
+                    for(int i = 0; i < lat_ary.size(); i++) {
+                        teamlat += lat_ary.get(i);
+                        teamlng += lng_ary.get(i);
+                    }
+                    teamlat = teamlat / (float)lat_ary.size();
+                    teamlng = teamlng / (float)lng_ary.size();
+
+                    Log.d("teamlatlng1", teamlat + ", " + teamlng);
+                }
+            }
+
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+
     }
 }
