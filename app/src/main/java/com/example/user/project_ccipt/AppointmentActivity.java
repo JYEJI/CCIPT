@@ -8,26 +8,36 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -56,7 +66,7 @@ import java.util.ArrayList;
  * Created by user on 2017-04-26.
  */
 
-public class AppointmentActivity extends FragmentActivity{
+public class AppointmentActivity extends FragmentActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String currentTeamName = TeamListActivity.currentTeamName;
 
@@ -87,10 +97,66 @@ public class AppointmentActivity extends FragmentActivity{
     DatePicker datePicker;
     //TimePicker timePicker;
 
+    ImageButton setting_bt;
+    NavigationView navigationView;
+    View headerLayout;
+    ImageView nav_userImage;
+    TextView nav_userName,nav_userEmail;
+    String userimage,username,useremail;
+    boolean buttoncliked = false;
+    RelativeLayout relativeLayout;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.appointment);
+
+        relativeLayout=(RelativeLayout)findViewById(R.id.relativeLayout);
+
+        setting_bt = (ImageButton) findViewById(R.id.setting_bt);
+        navigationView = (NavigationView)findViewById(R.id.nav_view);
+        headerLayout = navigationView.getHeaderView(0);
+        nav_userImage=(ImageView) headerLayout.findViewById(R.id.UserImage);
+        nav_userName=(TextView)headerLayout.findViewById(R.id.userName);
+        nav_userEmail=(TextView)headerLayout.findViewById(R.id.userEmail);
+        appointmentListView = (ListView)findViewById(R.id.appointmentlistview);
+
+        userimage = currentUser.getPhotoUrl().toString();
+        username = currentUser.getDisplayName().toString();
+        useremail = currentUser.getEmail();
+
+        Uri photoUri = Uri.parse(userimage);
+        Glide.with(AppointmentActivity.this).load(photoUri).into(nav_userImage);
+        nav_userName.setText(username);
+        nav_userEmail.setText(useremail);
+
+        final DrawerLayout drawer = (DrawerLayout) this.findViewById(R.id.drawer_layout);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        setting_bt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                //Opens the Drawer
+                if(!buttoncliked)
+                {
+                    drawer.openDrawer(navigationView);
+                    drawer.bringToFront();
+                    buttoncliked=true;
+                }
+                else
+                {
+                    drawer.closeDrawer(navigationView);
+                    appointmentListView.bringToFront();
+                    relativeLayout.bringToFront();
+                    buttoncliked=false;
+                }
+
+
+            }
+        });
+        navigationView.setNavigationItemSelectedListener(this);
+
 
         TextView teamNameTextView = (TextView) findViewById(R.id.AppointmentTeamName);
         teamNameTextView.setText(currentTeamName);
@@ -205,6 +271,60 @@ public class AppointmentActivity extends FragmentActivity{
                 });
             }
         });
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.user_setting, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_group) {
+            Intent teamSetting = new Intent(getApplicationContext(), TeamSetting.class);
+            startActivity(teamSetting);
+        }
+        else if (id == R.id.nav_location) {
+            Intent information = new Intent(getApplicationContext(), InformationActivity.class);
+            startActivity(information);
+        }
+        else if (id == R.id.nav_logout) {
+            FirebaseAuth.getInstance().signOut();
+            Intent killApp = new Intent(getApplicationContext(), SigninActivity.class);
+            killApp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            killApp.putExtra("KILL_APP", true);
+            startActivity(killApp);
+        }
+        else if (id == R.id.nav_manage) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        appointmentListView.bringToFront();
+        return true;
     }
 
     @Override

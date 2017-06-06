@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+
 /**
  * Created by user on 2017-04-26.
  */

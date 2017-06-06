@@ -64,6 +64,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -79,9 +80,7 @@ import java.util.Set;
 
 public class TeamListActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
 
-    //?ъ쭊?쇰줈 ?꾩넚???섎룎??諛쏆쓣 踰덊샇
     static int REQUEST_PICTURE=1;
-    //?⑤쾾?쇰줈 ?꾩넚???뚮젮諛쏆쓣 踰덊샇
     static int REQUEST_PHOTO_ALBUM=2;
 
     ImageView photo_imageview;
@@ -100,7 +99,6 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference teamRef = database.getReference("Teams");
-    DatabaseReference usersRef = database.getReference("Users");
 
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -128,6 +126,7 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
 
         findViewById(R.id.teamplus_button).setOnClickListener(this);
         Log.d("outListener::", "true");
+
         teamRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -171,6 +170,7 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
 
         userimage = currentUser.getPhotoUrl().toString();
         username = currentUser.getDisplayName().toString();
+
         useremail = currentUser.getEmail();
 
         Uri photoUri = Uri.parse(userimage);
@@ -205,7 +205,7 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -213,7 +213,7 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
         } else {
             super.onBackPressed();
         }
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -244,16 +244,21 @@ public class TeamListActivity extends AppCompatActivity implements View.OnClickL
         int id = item.getItemId();
 
         if (id == R.id.nav_group) {
-
-        } else if (id == R.id.nav_location) {
-
-        } else if (id == R.id.nav_logout) {
+            Intent teamSetting = new Intent(getApplicationContext(), TeamSetting.class);
+            startActivity(teamSetting);
+        }
+        else if (id == R.id.nav_location) {
+            Intent information = new Intent(getApplicationContext(), InformationActivity.class);
+            startActivity(information);
+        }
+        else if (id == R.id.nav_logout) {
             FirebaseAuth.getInstance().signOut();
             Intent killApp = new Intent(getApplicationContext(), SigninActivity.class);
             killApp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             killApp.putExtra("KILL_APP", true);
             startActivity(killApp);
-        } else if (id == R.id.nav_manage) {
+        }
+        else if (id == R.id.nav_manage) {
 
         }
 

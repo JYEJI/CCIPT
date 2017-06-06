@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -63,12 +64,29 @@
         android:id="@+id/chatListView"
         android:stackFromBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal"
         android:layout_marginBottom="100dp"
         android:dividerHeight="0px"
         android:divider="@null"/>
+
+        <EditText
+            android:id="@+id/send_message"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:layout_alignParentBottom="true"/>
+
+        <Button
+            android:id="@+id/send_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/send_message"
+            android:layout_alignParentEnd="true"
+            android:text="send"
+            android:textColor="#FFFFFF"
+            android:textSize="10dp" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -81,22 +99,6 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:id="@+id/buttons">
-
-            <EditText
-                android:id="@+id/send_message"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/brainstorming_button"/>
-
-            <Button
-                android:id="@+id/send_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/send_message"
-                android:layout_alignParentEnd="true"
-                android:text="send"
-                android:textColor="#FFFFFF"
-                android:textSize="10dp" />
 
         <Button
             android:layout_width="wrap_content"
@@ -135,8 +137,8 @@
             android:layout_alignParentBottom="true"
             android:layout_toRightOf="@+id/teamchat_button"
             android:textColor="#FFFFFF"/>
-        </RelativeLayout>
 
+             </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
 </LinearLayout>

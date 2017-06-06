@@ -13,10 +13,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
@@ -24,6 +26,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -65,7 +68,7 @@ import java.util.ArrayList;
  * Created by user on 2017-04-26.
  */
 
-public class BrainstormingActivity extends Activity {
+public class BrainstormingActivity extends Activity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String currentTeamName = TeamListActivity.currentTeamName;
     private static final String TAG = "BrainstormingActivity";
@@ -92,6 +95,11 @@ public class BrainstormingActivity extends Activity {
 
     ListView brainstormListView;
     RelativeLayout relativeLayout;
+    View headerLayout;
+    ImageView nav_userImage;
+    TextView nav_userName,nav_userEmail;
+
+    String userimage,username,useremail;
 
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -202,7 +210,6 @@ public class BrainstormingActivity extends Activity {
                         };
                         new AlertDialog.Builder(BrainstormingActivity.this)
                                 .setTitle("Select Image")
-                                //.setPositiveButton("Take a Photo",cameraListener)
                                 .setNeutralButton("Select Album",albumListener)
                                 .setNegativeButton("Cancel",cancelListener)
                                 .show();
@@ -270,10 +277,27 @@ public class BrainstormingActivity extends Activity {
             }
         });
 
+        setting_bt = (ImageButton) findViewById(R.id.setting_bt);
+        navigationView = (NavigationView)findViewById(R.id.nav_view);
+        headerLayout = navigationView.getHeaderView(0);
+        nav_userImage=(ImageView) headerLayout.findViewById(R.id.UserImage);
+        nav_userName=(TextView)headerLayout.findViewById(R.id.userName);
+        nav_userEmail=(TextView)headerLayout.findViewById(R.id.userEmail);
+
+        userimage = currentUser.getPhotoUrl().toString();
+        username = currentUser.getDisplayName().toString();
+        useremail = currentUser.getEmail();
+
+        Uri photoUri = Uri.parse(userimage);
+        Glide.with(BrainstormingActivity.this).load(photoUri).into(nav_userImage);
+        nav_userName.setText(username);
+        nav_userEmail.setText(useremail);
+
         setting_bt = (ImageButton) this.findViewById(R.id.br_setting_bt);
         navigationView = (NavigationView)this.findViewById(R.id.nav_view);
 
         final DrawerLayout drawer = (DrawerLayout) this.findViewById(R.id.drawer_layout);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         setting_bt.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -297,6 +321,7 @@ public class BrainstormingActivity extends Activity {
 
             }
         });
+        navigationView.setNavigationItemSelectedListener(this);
 
     }
 
@@ -313,6 +338,61 @@ public class BrainstormingActivity extends Activity {
         });
 
         registerForContextMenu(brainstormListView);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.user_setting, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_group) {
+            Intent teamSetting = new Intent(getApplicationContext(), TeamSetting.class);
+            startActivity(teamSetting);
+        }
+        else if (id == R.id.nav_location) {
+            Intent information = new Intent(getApplicationContext(), InformationActivity.class);
+            startActivity(information);
+        }
+        else if (id == R.id.nav_logout) {
+            FirebaseAuth.getInstance().signOut();
+            Intent killApp = new Intent(getApplicationContext(), SigninActivity.class);
+            killApp.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            killApp.putExtra("KILL_APP", true);
+            startActivity(killApp);
+        }
+        else if (id == R.id.nav_manage) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        brainstormListView.bringToFront();
+        relativeLayout.bringToFront();
+        return true;
     }
 
     public class CustomList extends ArrayAdapter<String> {

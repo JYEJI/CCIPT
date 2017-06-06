@@ -62,12 +62,12 @@
 
         </android.support.v4.widget.DrawerLayout>
 
-                <ListView
-                    android:id="@+id/appointmentlistview"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:orientation="horizontal"></ListView>
+         <ListView
+             android:id="@+id/appointmentlistview"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_centerHorizontal="true"
+             android:orientation="horizontal"></ListView>
 
         <RelativeLayout
             android:layout_width="wrap_content"
