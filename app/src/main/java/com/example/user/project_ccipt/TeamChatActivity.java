@@ -109,7 +109,10 @@ public class TeamChatActivity extends Activity implements NavigationView.OnNavig
         Uri photoUri = Uri.parse(userimage);
         Glide.with(TeamChatActivity.this).load(photoUri).into(nav_userImage);
         nav_userName.setText(username);
-        nav_userEmail.setText(useremail);
+        if(useremail==null)
+            nav_userEmail.setText(" ");
+        else
+            nav_userEmail.setText(useremail);
 
         final DrawerLayout drawer = (DrawerLayout) this.findViewById(R.id.drawer_layout);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -361,6 +364,8 @@ public class TeamChatActivity extends Activity implements NavigationView.OnNavig
 
         if (id == R.id.nav_group) {
             Intent teamSetting = new Intent(getApplicationContext(), TeamSetting.class);
+            teamSetting.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            teamSetting.putExtra("KILL_APP", true);
             startActivity(teamSetting);
         }
         else if (id == R.id.nav_location) {
@@ -381,6 +386,10 @@ public class TeamChatActivity extends Activity implements NavigationView.OnNavig
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         chatList.bringToFront();
+        relativeLayout.bringToFront();
+        send_button.bringToFront();
+        send_message.bringToFront();
+        buttoncliked=false;
         return true;
     }
 }

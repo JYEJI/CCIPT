@@ -291,7 +291,10 @@ public class BrainstormingActivity extends Activity implements NavigationView.On
         Uri photoUri = Uri.parse(userimage);
         Glide.with(BrainstormingActivity.this).load(photoUri).into(nav_userImage);
         nav_userName.setText(username);
-        nav_userEmail.setText(useremail);
+        if(useremail==null)
+            nav_userEmail.setText(" ");
+        else
+            nav_userEmail.setText(useremail);
 
         setting_bt = (ImageButton) this.findViewById(R.id.br_setting_bt);
         navigationView = (NavigationView)this.findViewById(R.id.nav_view);
@@ -371,6 +374,8 @@ public class BrainstormingActivity extends Activity implements NavigationView.On
 
         if (id == R.id.nav_group) {
             Intent teamSetting = new Intent(getApplicationContext(), TeamSetting.class);
+            teamSetting.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            teamSetting.putExtra("KILL_APP", true);
             startActivity(teamSetting);
         }
         else if (id == R.id.nav_location) {

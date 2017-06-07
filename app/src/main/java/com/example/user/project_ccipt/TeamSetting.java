@@ -186,4 +186,16 @@ public class TeamSetting extends AppCompatActivity {
         byte[] decodedBytes = Base64.decode(input, 0);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        boolean isKill = intent.getBooleanExtra("KILL_APP",true);
+        if (isKill) {
+            moveTaskToBack(true);
+            finish();
+        }
+    }
+
 }
+
