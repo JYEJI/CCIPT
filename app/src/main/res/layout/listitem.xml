@@ -16,7 +16,8 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/brainstormImage"
         android:layout_toRightOf="@+id/brainstormImage"
-        android:textSize="17dp"
+        android:textSize="20dp"
+        android:textColor="#87CEEB"
         android:textStyle="bold"/>
 
     <TextView
