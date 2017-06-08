@@ -85,6 +85,7 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
     private ArrayList<String> namelist = new ArrayList<>();
     private ArrayList<String> addresslist = new ArrayList<>();
     private ArrayList<String> datetimelist = new ArrayList<>();
+    private ArrayList<String> key = new ArrayList<>();
     String name = "", address = "", datetime = "";
     int year=100, month, day, hour=100, minute;
 
@@ -92,6 +93,8 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
     private ArrayList<String> memberUids = new ArrayList();
     private ArrayList<Double> lng_ary = new ArrayList<>();
     private ArrayList<Double> lat_ary = new ArrayList<>();
+
+    int index;
 
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -229,14 +232,6 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
                 dateButton = (ImageButton)customLayout.findViewById(R.id.dateButton);
                 timeButton = (ImageButton)customLayout.findViewById(R.id.timeButton);
 
-                GregorianCalendar calendar = new GregorianCalendar();
-/*
-                year = calendar.get(Calendar.YEAR);
-                month = calendar.get(Calendar.MONTH);
-                day= calendar.get(Calendar.DAY_OF_MONTH);
-                hour = calendar.get(Calendar.HOUR_OF_DAY);
-                minute = calendar.get(Calendar.MINUTE);
-*/
                 dateSetListener = new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int yearofYear, int monthOfYear, int dayOfMonth) {
@@ -297,13 +292,15 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
                 dateButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new DatePickerDialog(AppointmentActivity.this, dateSetListener, year, month, day).show();
+                        GregorianCalendar calendar = new GregorianCalendar();
+                        new DatePickerDialog(AppointmentActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
                     }
                 });
                 timeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new TimePickerDialog(AppointmentActivity.this, timeSetListener, hour, minute, false).show();
+                        GregorianCalendar calendar = new GregorianCalendar();
+                        new TimePickerDialog(AppointmentActivity.this, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
                     }
                 });
 
@@ -315,7 +312,9 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
 
                                 if(name.equals("")) {
                                     Toast.makeText(AppointmentActivity.this, "You should input place information.", Toast.LENGTH_LONG).show();
-                                } else {
+                                } else if(year == 100 || hour == 100) {
+                                    Toast.makeText(AppointmentActivity.this, "You should input date or time information.", Toast.LENGTH_LONG).show();
+                                }else {
                                     writeNewBrainstorm(name, datetime, address);
                                 }
 
@@ -443,7 +442,174 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
         appointmentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getBaseContext(), namelist.get(+position), Toast.LENGTH_LONG).show();
+                AlertDialog.Builder dialog = new AlertDialog.Builder(AppointmentActivity.this);
+
+                index = position;
+
+                View customLayout=View.inflate(AppointmentActivity.this,R.layout.appointment_dialog,null);
+                dialog.setView(customLayout);
+
+                placeEditText = (EditText)customLayout.findViewById(R.id.placeEditText);
+                dateEditText = (EditText)customLayout.findViewById(R.id.dateEditText);
+                timeEditText = (EditText)customLayout.findViewById(R.id.timeEditText);
+
+                String date = datetimelist.get(+position).split(" ")[0];
+                String time = datetimelist.get(+position).split(" ")[1];
+
+                placeEditText.setText(namelist.get(+position));
+                dateEditText.setText(date);
+                timeEditText.setText(time);
+
+                placeButton = (ImageButton)customLayout.findViewById(R.id.placeButton);
+                dateButton = (ImageButton)customLayout.findViewById(R.id.dateButton);
+                timeButton = (ImageButton)customLayout.findViewById(R.id.timeButton);
+
+                dateSetListener = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int yearofYear, int monthOfYear, int dayOfMonth) {
+
+                        // TODO Auto-generated method stub
+                        String msg = String.format("%d / %d / %d", yearofYear,monthOfYear+1, dayOfMonth);
+                        Toast.makeText(AppointmentActivity.this, msg, Toast.LENGTH_SHORT).show();
+
+                        year = yearofYear;
+                        month = monthOfYear + 1;
+                        day = dayOfMonth;
+
+                        if(year != 100) {
+                            dateEditText.setText(year + "/" + month + "/" + day);
+                        }
+                    }
+                };
+                timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfDay) {
+
+                        // TODO Auto-generated method stub
+                        String msg = String.format("%d / %d", hourOfDay, minuteOfDay);
+                        Toast.makeText(AppointmentActivity.this, msg, Toast.LENGTH_SHORT).show();
+
+                        hour = hourOfDay;
+                        minute = minuteOfDay;
+
+                        if(hour != 100) {
+                            timeEditText.setText(hour + ":" + minute);
+                        }
+                    }
+                };
+
+                placeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                        //37.282944 127.046250
+                        Log.d("teamlatlng2", teamlat + ", " + teamlng);
+
+                        LatLng boundSW = new LatLng(teamlat - 0.0025D,teamlng - 0.0025D);
+                        LatLng boundNE = new LatLng(teamlat + 0.0025D,teamlng + 0.0025D);
+                        LatLngBounds latLngBounds = new LatLngBounds(boundSW, boundNE);
+                        builder.setLatLngBounds(latLngBounds);
+                        try {
+                            startActivityForResult(builder.build(AppointmentActivity.this), PLACE_PICKER_REQUEST);
+
+
+                        } catch (GooglePlayServicesRepairableException e) {
+                            e.printStackTrace();
+                        } catch (GooglePlayServicesNotAvailableException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+                dateButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new DatePickerDialog(AppointmentActivity.this, dateSetListener, year, month, day).show();
+                    }
+                });
+                timeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new TimePickerDialog(AppointmentActivity.this, timeSetListener, hour, minute, false).show();
+                    }
+                });
+
+
+                dialog.setPositiveButton("Modify",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int which) {
+
+                                year = Integer.parseInt(dateEditText.getText().toString().split("/")[0]);
+                                month = Integer.parseInt(dateEditText.getText().toString().split("/")[1]);
+                                day = Integer.parseInt(dateEditText.getText().toString().split("/")[2]);
+
+                                hour = Integer.parseInt(timeEditText.getText().toString().split(":")[0]);
+                                minute = Integer.parseInt(timeEditText.getText().toString().split(":")[1]);
+
+
+                                datetime = year + "/" + month + "/" + day + " " + hour + ":" + minute;
+
+                                if(name.equals("")) {
+                                    Toast.makeText(AppointmentActivity.this, "You should input place information.", Toast.LENGTH_LONG).show();
+                                } else if(year == 100 || hour == 100) {
+                                    Toast.makeText(AppointmentActivity.this, "You should input date or time information.", Toast.LENGTH_LONG).show();
+                                } else {
+                                    //writeNewBrainstorm(name, datetime, address);
+                                    appointmentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
+
+                                            key.clear();
+                                            for (DataSnapshot contact : contactChildren) {
+                                                key.add(contact.getKey());
+                                            }
+                                            //makeCustomList();
+
+                                            Appointment appointment = new Appointment(name, datetime, address);
+
+                                            appointmentRef.child(key.get(index)).setValue(appointment);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                            Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                                        }
+                                    });
+
+                                }
+
+                            }});
+
+                // Setting Negative "NO" Button
+                dialog.setNegativeButton("Delete",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Write your code here to execute after dialog
+
+                                appointmentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
+
+                                        key.clear();
+                                        for (DataSnapshot contact : contactChildren) {
+                                            key.add(contact.getKey());
+                                        }
+                                        Log.d("index :: ", "" + index);
+                                        appointmentRef.child(key.get(index)).setValue(null);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                                    }
+                                });
+                            }
+                        });
+
+                dialog.create();
+                dialog.show();
             }
         });
 

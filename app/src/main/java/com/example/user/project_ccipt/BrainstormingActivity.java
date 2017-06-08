@@ -88,10 +88,12 @@ public class BrainstormingActivity extends Activity implements NavigationView.On
     ArrayList<String> titles = new ArrayList<>();
     ArrayList<String> descriptions = new ArrayList<>();
     ArrayList<Bitmap> images = new ArrayList<>();
+    ArrayList<String> key = new ArrayList<>();
 
     ImageView photo_imageview;
     Bitmap photo;
     String brainstormImage = "", brainstormTitle = "", brainstormDescription = "";
+    int index;
 
     ListView brainstormListView;
     RelativeLayout relativeLayout;
@@ -336,7 +338,131 @@ public class BrainstormingActivity extends Activity implements NavigationView.On
         brainstormListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getBaseContext(), titles.get(+position), Toast.LENGTH_LONG).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(BrainstormingActivity.this);
+                builder.setTitle("Idea")
+                        .setMessage("Title and Description");
+
+                View customLayout=View.inflate(BrainstormingActivity.this,R.layout.brainstorming_dialog,null);
+                builder.setView(customLayout);
+
+                final EditText titleBox = (EditText) customLayout.findViewById(R.id.input_title);
+                final EditText descriptionBox = (EditText)customLayout.findViewById(R.id.input_description);
+                photo_imageview = (ImageView)customLayout.findViewById(R.id.photo_imageview);
+
+                index = position;
+
+                titleBox.setText(titles.get(+position));
+                descriptionBox.setText(descriptions.get(+position));
+                photo_imageview.setImageBitmap(images.get(+position));
+
+                photo_imageview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener(){
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+
+                                if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                    if (shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                                        requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                                    } else {
+                                        requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                                    }
+                                } else {
+                                    doTakeAlbumAction();
+                                }
+                            }
+                        };
+                        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener(){
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                dialog.cancel();
+                            }
+                        };
+                        new AlertDialog.Builder(BrainstormingActivity.this)
+                                .setTitle("Select Image")
+                                .setNeutralButton("Select Album",albumListener)
+                                .setNegativeButton("Cancel",cancelListener)
+                                .show();
+                    }
+                });
+
+                builder.setPositiveButton("Modify",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int which) {
+
+                                String encodedImage = encodeToBase64(photo, Bitmap.CompressFormat.JPEG, 100);
+
+                                brainstormImage = encodedImage;
+
+                                if(titleBox.getText().toString().trim().length() > 10) {
+                                    Toast.makeText(getBaseContext(), "Length of team title is too long.\nYou should enter less than 10 characters", Toast.LENGTH_LONG).show();
+
+                                } else if (titleBox.getText().toString().trim().equals("") || descriptionBox.getText().toString().trim().equals("")){
+                                    Toast.makeText(getBaseContext(), "You should fill the boxes", Toast.LENGTH_LONG).show();
+                                } else {
+                                    brainstormTitle = titleBox.getText().toString().trim();
+                                    brainstormDescription = descriptionBox.getText().toString().trim();
+                                }
+
+                                brainstormRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
+
+                                        key.clear();
+                                        for (DataSnapshot contact : contactChildren) {
+                                            key.add(contact.getKey());
+                                        }
+
+                                        Brainstorm brainstorm = new Brainstorm(brainstormTitle, brainstormDescription, brainstormImage, currentUser.getDisplayName());
+
+                                        brainstormRef.child(key.get(index)).setValue(brainstorm);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                                    }
+                                });
+
+
+                                //writeNewBrainstorm(brainstormTitle, brainstormDescription, brainstormImage);
+                            }});
+
+                // Setting Negative "NO" Button
+                builder.setNegativeButton("Delete",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Write your code here to execute after dialog
+                                brainstormRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
+
+                                        key.clear();
+                                        for (DataSnapshot contact : contactChildren) {
+                                            key.add(contact.getKey());
+                                        }
+
+                                        brainstormRef.child(key.get(index)).setValue(null);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                                    }
+                                });
+
+                            }
+                        });
+                builder.create();
+                builder.show();
             }
         });
 
@@ -419,35 +545,6 @@ public class BrainstormingActivity extends Activity implements NavigationView.On
             description.setText(descriptions.get(+position));
             return rowView;
         }
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        // 컨텍스트 메뉴가 최초로 한번만 호출되는 콜백 메서드
-        Log.d("test", "onCreateContextMenu");
-//        getMenuInflater().inflate(R.menu.main, menu);
-
-        menu.setHeaderTitle("menu");
-        menu.add(0,1,100,"modify");
-        menu.add(0,2,100,"delete");
-    }
-
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        // 롱클릭했을 때 나오는 context Menu 의 항목을 선택(클릭) 했을 때 호출
-        switch(item.getItemId()) {
-            case 1 :
-                Toast.makeText(getBaseContext(), "modify", Toast.LENGTH_LONG).show();
-                return true;
-            case 2 :
-                Toast.makeText(getBaseContext(), "delete", Toast.LENGTH_LONG).show();
-                return true;
-        }
-
-        return super.onContextItemSelected(item);
     }
 
 
