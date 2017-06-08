@@ -3,6 +3,7 @@ package com.example.user.project_ccipt;
 import android.*;
 import android.Manifest;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,12 +30,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -61,6 +64,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Created by user on 2017-04-26.
@@ -80,6 +85,8 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
     private ArrayList<String> namelist = new ArrayList<>();
     private ArrayList<String> addresslist = new ArrayList<>();
     private ArrayList<String> datetimelist = new ArrayList<>();
+    String name = "", address = "", datetime = "";
+    int year=100, month, day, hour=100, minute;
 
     private Double teamlat = 0.0D, teamlng = 0.0D;
     private ArrayList<String> memberUids = new ArrayList();
@@ -94,8 +101,10 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
 
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-    DatePicker datePicker;
-    //TimePicker timePicker;
+    ImageButton dateButton, timeButton, placeButton;
+    EditText dateEditText, timeEditText, placeEditText;
+    DatePickerDialog.OnDateSetListener dateSetListener;
+    TimePickerDialog.OnTimeSetListener timeSetListener;
 
     ImageButton setting_bt;
     NavigationView navigationView;
@@ -207,35 +216,109 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
         plus_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                //37.282944 127.046250
-                Log.d("teamlatlng2", teamlat + ", " + teamlng);
-
-                LatLng boundSW = new LatLng(teamlat - 0.0025D,teamlng - 0.0025D);
-                LatLng boundNE = new LatLng(teamlat + 0.0025D,teamlng + 0.0025D);
-                LatLngBounds latLngBounds = new LatLngBounds(boundSW, boundNE);
-                builder.setLatLngBounds(latLngBounds);
-                try {
-                    startActivityForResult(builder.build(AppointmentActivity.this), PLACE_PICKER_REQUEST);
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
-                }
-
                 AlertDialog.Builder dialog = new AlertDialog.Builder(AppointmentActivity.this);
 
                 View customLayout=View.inflate(AppointmentActivity.this,R.layout.appointment_dialog,null);
                 dialog.setView(customLayout);
 
-                //datePicker = (DatePicker) findViewById(R.id.datePicker);
-                //final TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
+                placeEditText = (EditText)customLayout.findViewById(R.id.placeEditText);
+                dateEditText = (EditText)customLayout.findViewById(R.id.dateEditText);
+                timeEditText = (EditText)customLayout.findViewById(R.id.timeEditText);
 
-                dialog.setPositiveButton("Appoint",
+                placeButton = (ImageButton)customLayout.findViewById(R.id.placeButton);
+                dateButton = (ImageButton)customLayout.findViewById(R.id.dateButton);
+                timeButton = (ImageButton)customLayout.findViewById(R.id.timeButton);
+
+                GregorianCalendar calendar = new GregorianCalendar();
+/*
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                day= calendar.get(Calendar.DAY_OF_MONTH);
+                hour = calendar.get(Calendar.HOUR_OF_DAY);
+                minute = calendar.get(Calendar.MINUTE);
+*/
+                dateSetListener = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int yearofYear, int monthOfYear, int dayOfMonth) {
+
+                        // TODO Auto-generated method stub
+                        String msg = String.format("%d / %d / %d", yearofYear,monthOfYear+1, dayOfMonth);
+                        Toast.makeText(AppointmentActivity.this, msg, Toast.LENGTH_SHORT).show();
+
+                        year = yearofYear;
+                        month = monthOfYear + 1;
+                        day = dayOfMonth;
+
+                        if(year != 100) {
+                            dateEditText.setText(year + "/" + month + "/" + day);
+                        }
+                    }
+                };
+                timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfDay) {
+
+                        // TODO Auto-generated method stub
+                        String msg = String.format("%d / %d", hourOfDay, minuteOfDay);
+                        Toast.makeText(AppointmentActivity.this, msg, Toast.LENGTH_SHORT).show();
+
+                        hour = hourOfDay;
+                        minute = minuteOfDay;
+
+                        if(hour != 100) {
+                            timeEditText.setText(hour + ":" + minute);
+                        }
+                    }
+                };
+
+                placeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                        //37.282944 127.046250
+                        Log.d("teamlatlng2", teamlat + ", " + teamlng);
+
+                        LatLng boundSW = new LatLng(teamlat - 0.0025D,teamlng - 0.0025D);
+                        LatLng boundNE = new LatLng(teamlat + 0.0025D,teamlng + 0.0025D);
+                        LatLngBounds latLngBounds = new LatLngBounds(boundSW, boundNE);
+                        builder.setLatLngBounds(latLngBounds);
+                        try {
+                            startActivityForResult(builder.build(AppointmentActivity.this), PLACE_PICKER_REQUEST);
+
+
+                        } catch (GooglePlayServicesRepairableException e) {
+                            e.printStackTrace();
+                        } catch (GooglePlayServicesNotAvailableException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                });
+                dateButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new DatePickerDialog(AppointmentActivity.this, dateSetListener, year, month, day).show();
+                    }
+                });
+                timeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new TimePickerDialog(AppointmentActivity.this, timeSetListener, hour, minute, false).show();
+                    }
+                });
+
+
+                        dialog.setPositiveButton("Appoint",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int which) {
+                                datetime = year + "/" + month + "/" + day + " " + hour + ":" + minute;
 
-                                //Log.d("asdf", "" + datePicker.getYear() + datePicker.getMonth() + datePicker.getDayOfMonth());
+                                if(name.equals("")) {
+                                    Toast.makeText(AppointmentActivity.this, "You should input place information.", Toast.LENGTH_LONG).show();
+                                } else {
+                                    writeNewBrainstorm(name, datetime, address);
+                                }
+
                             }});
 
                 // Setting Negative "NO" Button
@@ -250,28 +333,28 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
                 dialog.create();
                 dialog.show();
 
+            }
+        });
 
-                appointmentRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
+        appointmentRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> contactChildren = dataSnapshot.getChildren();
 
-                        namelist.clear();
-                        addresslist.clear();
-                        datetimelist.clear();
-                        for (DataSnapshot contact : contactChildren) {
-                            namelist.add(contact.child("name").getValue().toString());
-                            addresslist.add(contact.child("address").getValue().toString());
-                            datetimelist.add(contact.child("datetime").getValue().toString());
-                        }
-                        makeCustomList();
-                    }
+                namelist.clear();
+                addresslist.clear();
+                datetimelist.clear();
+                for (DataSnapshot contact : contactChildren) {
+                    namelist.add(contact.child("name").getValue().toString());
+                    addresslist.add(contact.child("address").getValue().toString());
+                    datetimelist.add(contact.child("datetime").getValue().toString());
+                }
+                makeCustomList();
+            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                    }
-                });
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
         });
     }
@@ -340,7 +423,14 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(this, data);
 
-                writeNewBrainstorm(place.getName().toString(), "2018-06-03 10:00:00", place.getAddress().toString());
+                name = place.getName().toString().trim();
+                address = place.getAddress().toString().trim();
+
+                String msg = name + " : " + address;
+                Toast.makeText(AppointmentActivity.this, msg, Toast.LENGTH_SHORT).show();
+
+                placeEditText.setText(name);
+
             }
         }
     }

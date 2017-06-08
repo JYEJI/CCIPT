@@ -60,16 +60,17 @@
                     app:headerLayout="@layout/nav_header_user_setting"
                     app:menu="@menu/activity_user_setting_drawer" />
 
+
         </android.support.v4.widget.DrawerLayout>
 
-         <ListView
+                <ListView
              android:id="@+id/appointmentlistview"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:layout_centerHorizontal="true"
              android:orientation="horizontal"></ListView>
 
-        <RelativeLayout
+                <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
