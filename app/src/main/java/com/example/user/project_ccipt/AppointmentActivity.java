@@ -296,16 +296,26 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
                 dateButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        GregorianCalendar calendar = new GregorianCalendar();
-                        new DatePickerDialog(AppointmentActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+                        if(year == 100 ) {
+                            GregorianCalendar calendar = new GregorianCalendar();
+                            new DatePickerDialog(AppointmentActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+                        } else {
+                            new DatePickerDialog(AppointmentActivity.this, dateSetListener, year, month-1, day).show();
+                        }
+
                     }
                 });
                 timeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        GregorianCalendar calendar = new GregorianCalendar();
-                        new TimePickerDialog(AppointmentActivity.this, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
+                        if (hour == 100) {
+                            GregorianCalendar calendar = new GregorianCalendar();
+                            new TimePickerDialog(AppointmentActivity.this, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
+                        } else {
+                            new TimePickerDialog(AppointmentActivity.this, timeSetListener, hour, minute, false).show();
+                        }
                     }
+
                 });
 
 
