@@ -232,6 +232,10 @@ public class AppointmentActivity extends FragmentActivity implements NavigationV
                 dateButton = (ImageButton)customLayout.findViewById(R.id.dateButton);
                 timeButton = (ImageButton)customLayout.findViewById(R.id.timeButton);
 
+                placeButton.setImageResource(R.drawable.markerimage);
+                dateButton.setImageResource(R.drawable.calendar);
+                timeButton.setImageResource(R.drawable.calendar);
+
                 dateSetListener = new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int yearofYear, int monthOfYear, int dayOfMonth) {
