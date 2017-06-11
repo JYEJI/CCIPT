@@ -38,6 +38,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -198,6 +201,14 @@ public class TeamChatActivity extends Activity implements NavigationView.OnNavig
                 }
 
                 send_message.setText("");
+
+                FirebaseMessaging fm = FirebaseMessaging.getInstance();
+                fm.send(new RemoteMessage.Builder(currentUser.getDisplayName() + "@gcm.googleapis.com")
+                        .setMessageId(currentUser.getUid())
+                        .addData("my_message", "Hello World")
+                        .addData("my_action","SAY_HELLO")
+                        .build());
+
             }
         });
 

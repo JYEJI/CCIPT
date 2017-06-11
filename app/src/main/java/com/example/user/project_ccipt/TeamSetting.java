@@ -44,11 +44,12 @@ public class TeamSetting extends AppCompatActivity {
     ListView teamList;
     String teamName;
     String teamImage;
-    String TAG = "TeamListActivity";
+    String TAG = "TeamSetting";
 
     ArrayList<String> titles = new ArrayList<String>();
     ArrayList<Bitmap> images = new ArrayList<Bitmap>();
     String userimage,username,useremail;
+    String code;
 
     // Write a message to the database
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -113,7 +114,7 @@ public class TeamSetting extends AppCompatActivity {
                 builder.setPositiveButton("Yes",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int which) {
-                                teamRef.addValueEventListener(new ValueEventListener() {
+                                teamRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -124,18 +125,21 @@ public class TeamSetting extends AppCompatActivity {
                                         for (DataSnapshot contact : contactChildren) {
 
                                             if(contact.child("members").getChildrenCount() == 0) {
-                                                String contactName = contact.getKey();
-                                                teamRef.child(contactName).removeValue();
+
                                             } else{
                                                 Iterable<DataSnapshot> contactChildren2 = contact.child("members").getChildren();
                                                 for(DataSnapshot contact2 : contactChildren2) {
                                                     if(contact2.child("memberUid").getValue().toString().equals(currentUser.getUid())) {
-                                                        teamRef.child(contact.getKey()).removeValue();
+
+
+                                                        teamRef.child(contact.child("title").getValue().toString()).child("members").child(contact2.getKey()).removeValue();
+
 
                                                         titles.remove(contact.child("title").getValue().toString());
                                                         Bitmap decodedImage = decodeBase64(contact.child("image").getValue().toString());
                                                         images.remove(decodedImage);
                                                     }
+
                                                 }
                                             }
                                         }
